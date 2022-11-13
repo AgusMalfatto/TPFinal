@@ -1,8 +1,9 @@
 import DataBase.Conection;
+import Windows.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        Conection conect = new Conection();
-        conect.showData();
+        Ventana window = new Ventana();
+        window.setVisible(true);
     }
 }
