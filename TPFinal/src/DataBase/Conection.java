@@ -3,7 +3,9 @@ import java.sql.*;
 import java.util.logging.Level; 
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane; 
+import javax.swing.JOptionPane;
+
+import Products.Product; 
 
 public class Conection {
     Statement sqlSt; // runs sql
@@ -102,9 +104,9 @@ public class Conection {
         }
     }
      
-    public void modifyDBProd(String desc, String expire, int stock, float price, int discount, int id){
-        sql = "update products set Description = '" + desc + "', Expire = '" + expire + "', Stock = '" + stock + "', Price = '" + price +
-            "', Discount = '" + discount + "' where idProducts = " + id + ";";
+    public void modifyDBProd(Product prod, int id){
+        sql = "update products set Description = '" + prod.getDescription() + "', Expire = '" + prod.getExpiration() + "', Stock = '" + prod.getStock() + "', Price = '" + prod.getPrice() +
+            "', Discount = '" + prod.getDiscount()+ "' where idProducts = " + id + ";";
         try {
             executeConsult(sql);
         } catch (SQLException e) {
