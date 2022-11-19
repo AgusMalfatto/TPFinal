@@ -1,3 +1,4 @@
+import java.awt.Toolkit;
 public class Principal extends javax.swing.JFrame {
 
     /**
@@ -432,11 +433,11 @@ public class Principal extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Customer name", "Phone number", "Final price"
+                "ID", "ID Customer", "Customer name", "Phone number", "Final price"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -446,6 +447,8 @@ public class Principal extends javax.swing.JFrame {
         jScrollPane3.setViewportView(jTableSales);
         if (jTableSales.getColumnModel().getColumnCount() > 0) {
             jTableSales.getColumnModel().getColumn(0).setMaxWidth(100);
+            jTableSales.getColumnModel().getColumn(1).setPreferredWidth(100);
+            jTableSales.getColumnModel().getColumn(1).setMaxWidth(100);
         }
 
         javax.swing.GroupLayout jPanelSalesTableLayout = new javax.swing.GroupLayout(jPanelSalesTable);
@@ -565,58 +568,72 @@ public class Principal extends javax.swing.JFrame {
 
     private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                            
 
     private void btnDataAddActionPerformed(java.awt.event.ActionEvent evt) {                                           
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                          
-
+    
     private void btnDataModifyActionPerformed(java.awt.event.ActionEvent evt) {                                              
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                             
-
+    
     private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) {                                              
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                             
-
+    
     private void btnDataIncomeActionPerformed(java.awt.event.ActionEvent evt) {                                              
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                             
-
+    
     private void btnDataExpiredActionPerformed(java.awt.event.ActionEvent evt) {                                               
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                              
-
+    
     private void btnDataResetActionPerformed(java.awt.event.ActionEvent evt) {                                             
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                            
-
+    
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {                                          
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                         
-
+    
     private void btnOnlyStockActionPerformed(java.awt.event.ActionEvent evt) {                                             
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                            
-
+    
     private void btnOrderbySellsActionPerformed(java.awt.event.ActionEvent evt) {                                                
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                               
-
+    
     private void btnOnlyExpiredActionPerformed(java.awt.event.ActionEvent evt) {                                               
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                              
-
+    
     private void btnCarAddActionPerformed(java.awt.event.ActionEvent evt) {                                          
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                         
-
+    
     private void btnCarConfirmActionPerformed(java.awt.event.ActionEvent evt) {                                              
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                             
-
+    
     private void btnCarClearActionPerformed(java.awt.event.ActionEvent evt) {                                            
         // TODO add your handling code here:
+        Toolkit.getDefaultToolkit().beep();
     }                                           
 
     /**

@@ -4,3 +4,47 @@ CUADROS DE TEXTO -> txt
 LABELS -> lbl
 SPINNER -> spinner
 jTable y jPanel -> queda igual
+
+====================================
+CODIGO PARA BASE DE DATOS
+====================================
+-- CREAR LA BASE DE DATOS LLAMADA MARCIANITO
+CREATE DATABASE marcianito;
+
+-- UTILIZAR LA BASE DE DATOS RECIENTEMENTE CREADA
+USE marcianito;
+
+-- CREAR LA TABLA PRODUCTS
+CREATE TABLE products (
+	id INT AUTO_INCREMENT,
+    description VARCHAR(100) NOT NULL,
+    price REAL NOT NULL,
+    expire DATE NOT NULL,
+    stock INT NOT NULL,
+    discount REAL NOT NULL, 
+    sales INT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+-- CREAR TABLA SALES (VENTAS)
+CREATE TABLE sales (
+	id INT AUTO_INCREMENT,
+    id_customer INT NOT NULL,
+    customer_name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(30) NOT NULL,
+    final_price REAL NOT NULL,
+    PRIMARY KEY (id)
+);
+
+-- CREAR TABLA CUSTOMERS (CLIENTES)
+CREATE TABLE customers (
+	id INT AUTO_INCREMENT,
+    customer_name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(30) NOT NULL,
+    direccion VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id)
+)
+
+======================================
+FIN CODIGO DE BASE DE DATOS
+======================================
