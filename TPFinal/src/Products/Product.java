@@ -6,6 +6,7 @@ public class Product {
     private float price;
     private String expiration;
     private int discount;
+    private int sales;
     
     public Product(String description, int stock, float price, String expiration, int discount) {
         this.description = description;
@@ -13,6 +14,7 @@ public class Product {
         this.price = price;
         this.expiration = expiration;
         this.discount = discount;
+        this.sales = 0;
     }
 
     public String getDescription() {

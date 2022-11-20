@@ -92,9 +92,10 @@ public class Conection {
         }
     }
     
-    public void addDBProd(String desc, String expire, int stock, float price, int discount){
-        sql = "insert into products ( Description, Expire, Stock, Price, Discount) values ('" + 
-        desc + "', '" + expire + "', '" + stock  + "', '" + price + "', '" + discount + "');";
+    public void addDBProd(Product prod){
+        sql = "insert into products ( description, price, expire, stock, discount, sales) values ('" + 
+        prod.getDescription() + "', '" + Float.toString(prod.getPrice()) + "', '" + prod.getExpiration() + "', '" + 
+        Integer.toString(prod.getStock()) + "', '" + Integer.toString(prod.getDiscount()) + "');";
         try {
             executeConsult(sql);
         } catch (SQLException e) {
