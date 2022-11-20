@@ -28,9 +28,9 @@ public class Product {
     public int getStock() {
         return stock;
     }
-
-    public void setStock(int stock) {
-        this.stock = stock;
+    
+    public void setSales(int sales) {
+        this.sales = sales;
     }
 
     public float getPrice() {
@@ -57,5 +57,12 @@ public class Product {
         this.discount = discount;
     }
 
-    
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public int getSales() {
+        return sales;
+    }
+
 }

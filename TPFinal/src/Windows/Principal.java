@@ -6,6 +6,7 @@ import Products.Product;
 public class Principal extends javax.swing.JFrame {
 
     private Conection conect;
+    private Operation oper;
     /**
      * Creates new form Principal
      * @throws Exception
@@ -589,6 +590,7 @@ public class Principal extends javax.swing.JFrame {
             price > 0 && expire.equals("") && !Integer.toString(discount).equals("") && discount > 0) {
                 Product prod = new Product(description, stock, price, expire, discount);
                 conect.addDBProd(prod);
+                oper.setTableStock();
             }
     }                                          
     

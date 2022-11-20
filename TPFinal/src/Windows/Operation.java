@@ -15,6 +15,8 @@ public class Operation {
         model.addColumn("Stock");
         model.addColumn("Discount");
         model.addColumn("Sales");
+
+        
     }
     
 }
