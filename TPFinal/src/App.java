@@ -1,11 +1,9 @@
-import DataBase.Conection;
+import Windows.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        // Conection conect = new Conection();
-        // conect.addDBProd("Banana", "2025/05/11", 15, 15.3f, 10);
-        // conect.showData();
-        Principal app = new Principal();
-        app.setVisible(true);
+        Principal window = new Principal();
+        // Esto es un comentario
+        window.setVisible(true);
     }
 }
