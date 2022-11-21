@@ -18,7 +18,7 @@ public class Operation {
 		con = new Conection(); 
 	}
 
-	private void insertDataTable(ResultSet data, java.sql.ResultSetMetaData resul, DefaultTableModel model) {
+	public void insertDataTable(ResultSet data, java.sql.ResultSetMetaData resul, DefaultTableModel model) {
 		Object[] columns;
 		Object[] rows;
 		try {
@@ -82,9 +82,9 @@ public class Operation {
 		
 	}
 
-	public void orderBy(String name, DefaultTableModel model) {
+	public void orderBy(String name, DefaultTableModel model, String order) {
 		try {
-			ResultSet data = con.getDataTableOrderBy("products", name);
+			ResultSet data = con.getDataTableOrderBy("products", name, order);
 			java.sql.ResultSetMetaData resul = data.getMetaData();
 			cleanTable(model);
 			insertDataTable(data, resul, model);

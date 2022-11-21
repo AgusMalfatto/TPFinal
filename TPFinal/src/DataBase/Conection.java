@@ -48,8 +48,8 @@ public class Conection {
     private ResultSet executeGetter(String sql) throws SQLException{
         try{
             sqlSt = dbConnect.createStatement(); // allows SQL to be executed
-            result = sqlSt.executeQuery(sql);
-            return result;
+            ResultSet res = sqlSt.executeQuery(sql);
+            return res;
         }catch(SQLException ex){
             Logger.getLogger(Conection.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Could not connect to db");
@@ -69,8 +69,19 @@ public class Conection {
         return result;
     }
 
-    public ResultSet getDataTableExpired(String date) {
-        sql = "SELECT * FROM products WHERE expire <= CAST('" + date + "' AS datetime)";
+    public ResultSet getDataTableExpired(String condition, String date) {
+        sql = "SELECT * FROM products WHERE expire " + condition + " CAST('" + date + "' AS datetime)";
+        try {
+            result = executeGetter(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public ResultSet getStock(String table){
+        sql = "SELECT * FROM " + table + " WHERE stock > 0 ORDER BY id;";
         try {
             result = executeGetter(sql);
         } catch (SQLException e) {
@@ -146,12 +157,12 @@ public class Conection {
             e.printStackTrace();
         }
     }
-        
-    public ResultSet searchProd(String table, String title) {
-        sql = "Select * from " + table + " where Title LIKE '%" + title + "%' order by Title;";
+  
+    public ResultSet search(String table, String column, String value) {
+        sql = "SELECT * FROM " + table + " WHERE " + column + " LIKE '%" + value + "%' ORDER BY " + column + ";";
         try {
-            result = executeGetter(sql);
-            return result;
+            this.result = executeGetter(sql);
+            return this.result;
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
@@ -159,8 +170,8 @@ public class Conection {
         return null;
     }
 
-    public ResultSet getDataTableOrderBy(String table, String column) {
-        sql = "Select * from " + table + " order by " + column + ";";
+    public ResultSet getDataTableOrderBy(String table, String column, String order) {
+        sql = "Select * from " + table + " order by " + column + " " + order + ";";
         try {
             result = executeGetter(sql);
             
