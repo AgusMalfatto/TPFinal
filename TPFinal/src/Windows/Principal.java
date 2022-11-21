@@ -717,7 +717,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             int id = Integer.parseInt(txtid.getText());
-            conect.delelteDB("products", id);   
+            conect.deleteDB("products", id);   
             clean();         
         }                                          
         oper.setTable(jTableProducts, modelProd);

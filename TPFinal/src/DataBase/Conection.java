@@ -8,20 +8,21 @@ import javax.swing.JOptionPane;
 import Products.Product; 
 
 public class Conection {
-    Statement sqlSt; // runs sql
+    Statement sqlSt = null; // runs sql
     // String useSQL = new String("use prueba");
     String output;
     ResultSet result; // holds the output from sql
     String sql;
     private String dbURL = "jdbc:mysql://localhost:3306/marcianito";
     private Connection dbConnect;
-    
+    private String password = "password";
+    private String user = "root";
 
     public Conection() throws Exception {
         System.out.println("Welcome to 'El Marcianito'");
         try{
          Class.forName("com.mysql.cj.jdbc.Driver");
-         dbConnect = DriverManager.getConnection(dbURL, "root", "Racing.2010");
+         dbConnect = DriverManager.getConnection(dbURL, user, password);
          sqlSt = dbConnect.createStatement(); // allows SQL to be executed
          sqlSt.close();
 
@@ -53,18 +54,20 @@ public class Conection {
         }catch(SQLException ex){
             Logger.getLogger(Conection.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Could not connect to db");
+            System.out.println("aca hay algo que no me andaaaaaa");
             JOptionPane.showMessageDialog(null, "Something is wrong with the execution the query.");
         }
         return null;
     }
 
     public ResultSet getDataTable(String table){
-        sql = "Select * from " + table + " order by id;";
+        sql = "Select * from " + table;// + " order by id;";
         try {
             result = executeGetter(sql);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
+            return null;
         }
         return result;
     }
@@ -82,7 +85,7 @@ public class Conection {
         return null;
     }
 
-    public void delelteDB(String table, int id){
+    public void deleteDB(String table, int id){
         sql = "Delete from " + table + " where id = " + id;
         try {
             executeConsult(sql);
