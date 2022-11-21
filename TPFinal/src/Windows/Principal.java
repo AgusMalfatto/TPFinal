@@ -829,13 +829,12 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     }                                              
 
     private void btnCarAddActionPerformed(java.awt.event.ActionEvent evt) {                                          
-        CustomerClass windowC = new CustomerClass();
-        windowC.setVisible(true);
+        
     }                                         
 
     private void btnCarConfirmActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        
-        custom.setVisible(true);
+        CustomersWindow windowC = new CustomersWindow();
+        windowC.setVisible(true);
     }                                             
 
     private void btnCarClearActionPerformed(java.awt.event.ActionEvent evt) {                                            
