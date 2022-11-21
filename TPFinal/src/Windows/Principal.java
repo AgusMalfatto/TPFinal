@@ -24,6 +24,8 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     private Conection conect;
     private Operation oper;
     private DefaultTableModel modelProd;
+    protected int colSelected = -1;
+    protected String nameColumn = null;
     /**
      * Creates new form Principal
      * @throws Exception
@@ -491,9 +493,9 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         jTableProducts.getTableHeader().addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int col = jTableProducts.columnAtPoint(e.getPoint());
-                String name = jTableProducts.getColumnName(col);
-                oper.orderBy(name, modelProd);
+                colSelected = jTableProducts.columnAtPoint(e.getPoint());
+                nameColumn = jTableProducts.getColumnName(colSelected);
+                oper.orderBy(nameColumn, modelProd);
             }
 
             @Override
