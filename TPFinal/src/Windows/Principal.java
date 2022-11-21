@@ -661,48 +661,67 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         
         Product prod = getProduct();
 
-        if(!prod.getDescription().equals("") && !Integer.toString(prod.getStock()).equals("") && prod.getStock() > 0 && !Float.toString(prod.getPrice()).equals("") && 
-        prod.getPrice() > 0 && !prod.getExpiration().equals("")) {
-                
-                conect.addDBProd(prod);
-                oper.setTable(jTableProducts, modelProd);
-            }
+        if(prod != null) {                
+            conect.addDBProd(prod);
+            oper.setTable(jTableProducts, modelProd);
+        } else {
+            JOptionPane.showMessageDialog(null, "Please insert all the data.");
+        }
     }                                          
     
     private Product getProduct() {
-        String description = txtDescription.getText();
-        int stock = Integer.parseInt(txtStock.getText());
-        float price = Float.parseFloat(txtPrice.getText());
-        String expire = txtExpiration.getText();
-        int discount = (int) Math.round(Double.parseDouble(txtDiscount.getText()));
-        Product prod = new Product(description, stock, price, expire, discount);
+        Product prod = null;
 
+        if(!txtDescription.getText().equals("") && !txtStock.getText().equals("") && !txtPrice.getText().equals("") && 
+        !txtExpiration.getText().equals("")) {
+            try {
+                String description = txtDescription.getText();
+                int stock = Integer.parseInt(txtStock.getText());
+                float price = Float.parseFloat(txtPrice.getText());
+                String expire = txtExpiration.getText();
+                int discount = (int) Math.round(Double.parseDouble(txtDiscount.getText()));
+                prod = new Product(description, stock, price, expire, discount);  
+            }catch(NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Please insert correct data.");                
+            }
+        }
         return prod;
     }
 
     private void btnDataModifyActionPerformed(java.awt.event.ActionEvent evt) {                                              
         Product prod = getProduct();
-        int id = Integer.parseInt(txtid.getText());
-
-        try {
-            oper.modifyProd(prod, id, modelProd);
-            oper.cleanTable(modelProd);
+        
+        if(prod != null) {
+             try {
+                int id = Integer.parseInt(txtid.getText());
+                oper.modifyProd(prod, id, modelProd);
+                oper.cleanTable(modelProd);
             try {
                 oper.setTable(jTableProducts, modelProd);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Something is wrong, please check the data");
-            e.printStackTrace();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Something is wrong, please check the data");
+                e.printStackTrace();
+            }
         }
+        else {
+            JOptionPane.showMessageDialog(null, "Please select a product from the table.");
+        }
+       
     }                                             
 
-    private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                              
-        int id = Integer.parseInt(txtid.getText());
-        conect.delelteDB("products", id);
+    private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
+        if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
+        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            int id = Integer.parseInt(txtid.getText());
+            conect.delelteDB("products", id);   
+            clean();         
+        }                                          
         oper.setTable(jTableProducts, modelProd);
+        
     }                                             
 
     private void btnDataIncomeActionPerformed(java.awt.event.ActionEvent evt) {                                              
@@ -714,15 +733,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     }                                              
 
     private void btnDataResetActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                             
-        txtid.setText("");
-        txtDescription.setText("");
-        txtPrice.setText("");
-        txtExpiration.setText("");
-        txtStock.setText("");
-        txtDiscount.setText("");
-        txtSearch.setText("");
-        oper.cleanTable(modelProd);
-        oper.setTable(jTableProducts, modelProd);
+        clean();
     }                                            
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {                                          
@@ -752,7 +763,19 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
     private void btnCarClearActionPerformed(java.awt.event.ActionEvent evt) {                                            
         // TODO add your handling code here:
-    }                                           
+    }       
+    
+    public void clean() throws Exception {
+        txtid.setText("");
+        txtDescription.setText("");
+        txtPrice.setText("");
+        txtExpiration.setText("");
+        txtStock.setText("");
+        txtDiscount.setText("");
+        txtSearch.setText("");
+        oper.cleanTable(modelProd);
+        oper.setTable(jTableProducts, modelProd);
+    }
 
     /**
      * @param args the command line arguments
