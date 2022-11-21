@@ -1,12 +1,25 @@
 package Windows;
 
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import javax.swing.JOptionPane;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.SQLException;
+
 import DataBase.Conection;
 import Products.Product;
 
-public class Principal extends javax.swing.JFrame {
+public class Principal extends javax.swing.JFrame implements ActionListener, AncestorListener {
 
     private Conection conect;
     private Operation oper;
+    private DefaultTableModel modelProd;
     /**
      * Creates new form Principal
      * @throws Exception
@@ -73,6 +86,7 @@ public class Principal extends javax.swing.JFrame {
         jTableCar = new javax.swing.JTable();
         custom = new CustomerClass();
         conect = new Conection();
+        oper = new Operation();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -163,14 +177,28 @@ public class Principal extends javax.swing.JFrame {
         btnDataAdd.setText("Add");
         btnDataAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDataAddActionPerformed(evt);
+                try {
+                    btnDataAddActionPerformed(evt);
+                    oper.cleanTable(modelProd);
+                    oper.setTable(jTableProducts, modelProd);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 
         btnDataDelete.setText("Delete");
         btnDataDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDataDeleteActionPerformed(evt);
+                try {
+                    btnDataDeleteActionPerformed(evt);
+                    oper.cleanTable(modelProd);
+                    oper.setTable(jTableProducts, modelProd);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -198,7 +226,12 @@ public class Principal extends javax.swing.JFrame {
         btnDataReset.setText("Reset");
         btnDataReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDataResetActionPerformed(evt);
+                try {
+                    btnDataResetActionPerformed(evt);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -390,23 +423,63 @@ public class Principal extends javax.swing.JFrame {
         jPanelProductsTable.setForeground(new java.awt.Color(255, 255, 255));
 
         jTableProducts.setBackground(new java.awt.Color(102, 102, 102));
-        jTableProducts.setForeground(new java.awt.Color(255, 255, 255));
-        jTableProducts.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+        jTableProducts.setForeground(new java.awt.Color(255, 255, 255)); 
 
-            },
-            new String [] {
-                "ID", "Description", "Price", "Expire", "Stock", "Discount", "Sales"
+        jTableProducts.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = jTableProducts.getSelectedRow();
+				if(row >= 0)
+				{
+					txtid.setText(jTableProducts.getValueAt(row, 0).toString());
+					txtDescription.setText(jTableProducts.getValueAt(row, 1).toString());
+					txtPrice.setText(jTableProducts.getValueAt(row, 2).toString());
+					txtExpiration.setText(jTableProducts.getValueAt(row, 3).toString());
+					txtStock.setText(jTableProducts.getValueAt(row, 4).toString());
+                    txtDiscount.setText(jTableProducts.getValueAt(row, 5).toString());
+                }
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
-            };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
             }
-        });
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+		});
+
+        modelProd = new DefaultTableModel();
+        modelProd.addColumn("ID");
+        modelProd.addColumn("Description");
+        modelProd.addColumn("Price");
+        modelProd.addColumn("Expire");
+        modelProd.addColumn("Stock");
+        modelProd.addColumn("Discount");
+        modelProd.addColumn("Sales");
+
+        jTableProducts.setModel(modelProd);
+
+        jScrollPane1.setViewportView(jTableProducts);
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(modelProd);
+		jTableProducts.setRowSorter(sorter);
+
         jScrollPane1.setViewportView(jTableProducts);
         if (jTableProducts.getColumnModel().getColumnCount() > 0) {
             jTableProducts.getColumnModel().getColumn(0).setMaxWidth(60);
@@ -439,6 +512,9 @@ public class Principal extends javax.swing.JFrame {
 
         jTableSales.setBackground(new java.awt.Color(102, 102, 102));
         jTableSales.setForeground(new java.awt.Color(255, 255, 255));
+
+        
+
         jTableSales.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -573,33 +649,60 @@ public class Principal extends javax.swing.JFrame {
         );
 
         pack();
+
+        oper.setTable(jTableProducts, modelProd);
     }// </editor-fold>                        
 
     private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
         // TODO add your handling code here:
     }                                            
 
-    private void btnDataAddActionPerformed(java.awt.event.ActionEvent evt) {                                           
-        String description = txtDescription.getText();
-        int stock = Integer.parseInt(txtStock.getText());
-        float price = Float.parseFloat(txtPrice.getText());
-        String expire = txtDescription.getText();
-        int discount = Integer.parseInt(txtDescription.getText());
+    private void btnDataAddActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                           
+        
+        Product prod = getProduct();
 
-        if(!description.equals("") && !Integer.toString(stock).equals("") && stock > 0 && !Float.toString(price).equals("") && 
-            price > 0 && expire.equals("") && !Integer.toString(discount).equals("") && discount > 0) {
-                Product prod = new Product(description, stock, price, expire, discount);
+        if(!prod.getDescription().equals("") && !Integer.toString(prod.getStock()).equals("") && prod.getStock() > 0 && !Float.toString(prod.getPrice()).equals("") && 
+        prod.getPrice() > 0 && !prod.getExpiration().equals("")) {
+                
                 conect.addDBProd(prod);
-                oper.setTableStock();
+                oper.setTable(jTableProducts, modelProd);
             }
     }                                          
     
+    private Product getProduct() {
+        String description = txtDescription.getText();
+        int stock = Integer.parseInt(txtStock.getText());
+        float price = Float.parseFloat(txtPrice.getText());
+        String expire = txtExpiration.getText();
+        int discount = (int) Math.round(Double.parseDouble(txtDiscount.getText()));
+        Product prod = new Product(description, stock, price, expire, discount);
+
+        return prod;
+    }
+
     private void btnDataModifyActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
+        Product prod = getProduct();
+        int id = Integer.parseInt(txtid.getText());
+
+        try {
+            oper.modifyProd(prod, id, modelProd);
+            oper.cleanTable(modelProd);
+            try {
+                oper.setTable(jTableProducts, modelProd);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong, please check the data");
+            e.printStackTrace();
+        }
     }                                             
 
-    private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
+    private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                              
+        int id = Integer.parseInt(txtid.getText());
+        conect.delelteDB("products", id);
+        oper.setTable(jTableProducts, modelProd);
     }                                             
 
     private void btnDataIncomeActionPerformed(java.awt.event.ActionEvent evt) {                                              
@@ -610,8 +713,16 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }                                              
 
-    private void btnDataResetActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        // TODO add your handling code here:
+    private void btnDataResetActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                             
+        txtid.setText("");
+        txtDescription.setText("");
+        txtPrice.setText("");
+        txtExpiration.setText("");
+        txtStock.setText("");
+        txtDiscount.setText("");
+        txtSearch.setText("");
+        oper.cleanTable(modelProd);
+        oper.setTable(jTableProducts, modelProd);
     }                                            
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {                                          
@@ -730,4 +841,27 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTextField txtid;
     CustomerClass custom;
     // End of variables declaration                   
+    @Override
+    public void ancestorAdded(AncestorEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void ancestorRemoved(AncestorEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void ancestorMoved(AncestorEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
 }

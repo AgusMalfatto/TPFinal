@@ -41,7 +41,7 @@ public class Conection {
         }catch(SQLException ex){
             Logger.getLogger(Conection.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Could not connect to db");
-            JOptionPane.showMessageDialog(null, "Something is wrong, please check the data.");
+            JOptionPane.showMessageDialog(null, "Something is wrong with the execution the query.");
         }
     }
     
@@ -53,17 +53,17 @@ public class Conection {
         }catch(SQLException ex){
             Logger.getLogger(Conection.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Could not connect to db");
-            JOptionPane.showMessageDialog(null, "Something is wrong, please check the data.");
+            JOptionPane.showMessageDialog(null, "Something is wrong with the execution the query.");
         }
         return null;
     }
 
     public ResultSet getDataTable(String table){
-        sql = "Select * from " + table + " order by idProducts;";
+        sql = "Select * from " + table + " order by id;";
         try {
             result = executeGetter(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
         }
         return result;
@@ -83,11 +83,11 @@ public class Conection {
     }
 
     public void delelteDB(String table, int id){
-        sql = "Delete from " + table + " where idProducts = " + id;
+        sql = "Delete from " + table + " where id = " + id;
         try {
             executeConsult(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
         }
     }
@@ -95,23 +95,23 @@ public class Conection {
     public void addDBProd(Product prod){
         sql = "insert into products ( description, price, expire, stock, discount, sales) values ('" + 
         prod.getDescription() + "', '" + Float.toString(prod.getPrice()) + "', '" + prod.getExpiration() + "', '" + 
-        Integer.toString(prod.getStock()) + "', '" + Integer.toString(prod.getDiscount()) + "');";
+        Integer.toString(prod.getStock()) + "', '" + Integer.toString(prod.getDiscount())+ "', '" + Integer.toString(prod.getSales()) + "');";
         try {
             executeConsult(sql);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
-            JOptionPane.showMessageDialog(null, "Something is wrong, please check the data.");
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
         }
     }
      
     public void modifyDBProd(Product prod, int id){
         sql = "update products set Description = '" + prod.getDescription() + "', Expire = '" + prod.getExpiration() + "', Stock = '" + prod.getStock() + "', Price = '" + prod.getPrice() +
-            "', Discount = '" + prod.getDiscount()+ "' where idProducts = " + id + ";";
+            "', Discount = '" + prod.getDiscount()+ "' where id = " + id + ";";
         try {
             executeConsult(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
         }
     }
@@ -122,7 +122,7 @@ public class Conection {
             result = executeGetter(sql);
             return result;
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
         }
         return null;
@@ -134,7 +134,7 @@ public class Conection {
             result = executeGetter(sql);
             
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
         }
         return result;
@@ -147,7 +147,7 @@ public class Conection {
                 System.out.println(result.getString(1) + " - " + result.getString(2) + " - " + result.getString(3) + " - " + result.getString(4) + " - " + result.getString(5) + " - " + result.getString(6));
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
         }
 

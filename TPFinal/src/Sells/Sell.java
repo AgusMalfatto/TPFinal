@@ -48,6 +48,10 @@ public class Sell {
         this.finalPrice = calculate.finalPrice(products, amount);
     }
 
+    public float getFinalPrice() {
+        return finalPrice;
+    }
+
     public void addToDB() {
         // add the sell to the database in the sells table
     }
