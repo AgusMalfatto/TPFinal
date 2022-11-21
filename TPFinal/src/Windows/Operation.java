@@ -8,8 +8,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-import com.mysql.cj.jdbc.result.ResultSetMetaData;
-
 import DataBase.Conection;
 import Products.Product;
 
@@ -21,32 +19,41 @@ public class Operation {
 		con = new Conection(); 
 	}
 
-	public void setTable(JTable table, DefaultTableModel model, String db) throws SQLException {
+	private void insertDataTable(ResultSet data, java.sql.ResultSetMetaData resul, DefaultTableModel model) {
+		Object[] columns;
+		Object[] rows;
 		try {
-			ResultSet data = con.getDataTable(db);
-			java.sql.ResultSetMetaData resul = data.getMetaData();
-			Object[] columns = new Object[resul.getColumnCount()];
-			Object[] rows = new Object[resul.getColumnCount()];
-
+			columns = new Object[resul.getColumnCount()];
+			rows = new Object[resul.getColumnCount()];
 			for(int i = 0; i < columns.length; i++) {
 				columns[i] = resul.getColumnName(i + 1);
-				System.out.println(columns[i]);
 			}
 		
 			if(data != null){
 				try {
 					while(data.next()){
-
+	
 						for(int i = 0; i < columns.length; i++) {
 							rows[i] = data.getString(columns[i].toString());
-						}						
-						model.addRow(rows);
 						}
+						model.addRow(rows);
+					}				
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}	
+	}
+
+	public void setTable(JTable table, DefaultTableModel model, String db) throws SQLException {
+		try {
+			ResultSet data = con.getDataTable(db);
+			java.sql.ResultSetMetaData resul = data.getMetaData();
+			insertDataTable(data, resul, model);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Problems with the data base");
 		}
@@ -74,6 +81,20 @@ public class Operation {
 		}
 		
 		
+	}
+
+	public void orderBy(String name, DefaultTableModel model) {
+		try {
+			ResultSet data = con.getDataTableOrderBy("products", name);
+			java.sql.ResultSetMetaData resul = data.getMetaData();
+			cleanTable(model);
+			insertDataTable(data, resul, model);
+		} catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Something wrong just happened.");
+
+		}
+		
+
 	}
 
     

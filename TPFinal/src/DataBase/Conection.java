@@ -69,8 +69,19 @@ public class Conection {
         return result;
     }
 
+    public ResultSet getDataTableExpired(String date) {
+        sql = "SELECT * FROM products WHERE expire <= CAST('" + date + "' AS datetime)";
+        try {
+            result = executeGetter(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public ResultSet getProd(String table, int id) {
-        sql = "Select * from " + table + " where idProducts = " + id;
+        sql = "SELECT * FROM " + table + " WHERE id = " + id + ";";
         try {
             result = executeGetter(sql);
             return result;
@@ -108,6 +119,26 @@ public class Conection {
     public void modifyDBProd(Product prod, int id){
         sql = "update products set Description = '" + prod.getDescription() + "', Expire = '" + prod.getExpiration() + "', Stock = '" + prod.getStock() + "', Price = '" + prod.getPrice() +
             "', Discount = '" + prod.getDiscount()+ "' where id = " + id + ";";
+        try {
+            executeConsult(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+    }
+
+    public void updateDB(String table, String column, String newValue, int id){
+        sql = "UPDATE " + table + " SET " + column + " = " + newValue + " WHERE id = " + id + ";";
+        try {
+            executeConsult(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+    }
+
+    public void updateDBStock(String table, String column, int newValue, int id){
+        sql = "UPDATE " + table + " SET " + column + " = " + column + " + " + newValue + " WHERE id = " + id + ";";
         try {
             executeConsult(sql);
         } catch (SQLException e) {
