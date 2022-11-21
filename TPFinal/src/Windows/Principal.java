@@ -5,12 +5,16 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.JOptionPane;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import DataBase.Conection;
 import Products.Product;
@@ -20,6 +24,8 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     private Conection conect;
     private Operation oper;
     private DefaultTableModel modelProd;
+    protected int colSelected = -1;
+    protected String nameColumn = null;
     /**
      * Creates new form Principal
      * @throws Exception
@@ -180,7 +186,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
                 try {
                     btnDataAddActionPerformed(evt);
                     oper.cleanTable(modelProd);
-                    oper.setTable(jTableProducts, modelProd);
+                    oper.setTable(jTableProducts, modelProd, "products");
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -194,7 +200,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
                 try {
                     btnDataDeleteActionPerformed(evt);
                     oper.cleanTable(modelProd);
-                    oper.setTable(jTableProducts, modelProd);
+                    oper.setTable(jTableProducts, modelProd, "products");
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -212,7 +218,15 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         btnDataIncome.setText("Income");
         btnDataIncome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDataIncomeActionPerformed(evt);
+                try {
+                    btnDataIncomeActionPerformed(evt);
+                } catch (NumberFormatException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -476,9 +490,38 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
         jTableProducts.setModel(modelProd);
 
-        jScrollPane1.setViewportView(jTableProducts);
-		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(modelProd);
-		jTableProducts.setRowSorter(sorter);
+        jTableProducts.getTableHeader().addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                colSelected = jTableProducts.columnAtPoint(e.getPoint());
+                nameColumn = jTableProducts.getColumnName(colSelected);
+                oper.orderBy(nameColumn, modelProd);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
 
         jScrollPane1.setViewportView(jTableProducts);
         if (jTableProducts.getColumnModel().getColumnCount() > 0) {
@@ -650,25 +693,27 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
         pack();
 
-        oper.setTable(jTableProducts, modelProd);
+        oper.setTable(jTableProducts, modelProd, "products");
     }// </editor-fold>                        
 
     private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
         // TODO add your handling code here:
     }                                            
 
+    // Agrego un nuevo producto a la base de datos
     private void btnDataAddActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                           
         
         Product prod = getProduct();
 
         if(prod != null) {                
             conect.addDBProd(prod);
-            oper.setTable(jTableProducts, modelProd);
+            oper.setTable(jTableProducts, modelProd, "products");
         } else {
-            JOptionPane.showMessageDialog(null, "Please insert all the data.");
+            JOptionPane.showMessageDialog(null, "Please insert correct data.");
         }
     }                                          
     
+    // Capturo los datos ingresados y retorno un objeto de tipo product
     private Product getProduct() {
         Product prod = null;
 
@@ -682,12 +727,13 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
                 int discount = (int) Math.round(Double.parseDouble(txtDiscount.getText()));
                 prod = new Product(description, stock, price, expire, discount);  
             }catch(NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Please insert correct data.");                
+                             
             }
         }
         return prod;
     }
 
+    // Modifico los datos de la db de un prod seleccionado 
     private void btnDataModifyActionPerformed(java.awt.event.ActionEvent evt) {                                              
         Product prod = getProduct();
         
@@ -697,7 +743,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
                 oper.modifyProd(prod, id, modelProd);
                 oper.cleanTable(modelProd);
             try {
-                oper.setTable(jTableProducts, modelProd);
+                oper.setTable(jTableProducts, modelProd, "products");
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -713,6 +759,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
        
     }                                             
 
+    // Se elimina un producto seleccionado de la db 
     private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -720,16 +767,45 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
             conect.deleteDB("products", id);   
             clean();         
         }                                          
-        oper.setTable(jTableProducts, modelProd);
+        oper.setTable(jTableProducts, modelProd, "products");
         
     }                                             
 
-    private void btnDataIncomeActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
+    //Ingeso de mercadería
+    private void btnDataIncomeActionPerformed(java.awt.event.ActionEvent evt) throws NumberFormatException, SQLException {                                              
+        if(!txtid.getText().equals("")) {
+            ResultSet data = conect.getProd("products", Integer.parseInt(txtid.getText()));
+            if(data.next()) {
+                int amount = Integer.parseInt(JOptionPane.showInputDialog(null, "Insert amount you enter"));
+                if(amount > 0) {
+                    conect.updateDBStock("products", "stock", amount, Integer.parseInt(txtid.getText()));
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please insert correct data.");
+                }
+                oper.cleanTable(modelProd);
+                oper.setTable(jTableProducts, modelProd, "products");
+            } else {
+                JOptionPane.showMessageDialog(null, "Product not found.");
+            }
+           
+        }
     }                                             
 
     private void btnDataExpiredActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        // TODO add your handling code here:
+        LocalDate today = LocalDate.now();
+        try {
+            ResultSet data = conect.getDataTableExpired(today.toString());
+            while(data.next()) {
+                conect.updateDB("products", "stock", "0", Integer.parseInt(data.getString("id")));
+            }
+            oper.cleanTable(modelProd);
+            oper.setTable(jTableProducts, modelProd, "products");
+        } catch (SQLException e) {
+            // TODO: handle exception
+        }
+        
+        
+
     }                                              
 
     private void btnDataResetActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                             
@@ -775,7 +851,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         txtDiscount.setText("");
         txtSearch.setText("");
         oper.cleanTable(modelProd);
-        oper.setTable(jTableProducts, modelProd);
+        oper.setTable(jTableProducts, modelProd, "products");
     }
 
     /**

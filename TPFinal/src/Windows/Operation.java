@@ -17,34 +17,46 @@ public class Operation {
 	public Operation() throws Exception {
 		con = new Conection(); 
 	}
-    public void setTable(JTable table, DefaultTableModel model) throws Exception {
-        
-               
-        ResultSet data = con.getDataTable("products");
-		
-		//CleanTable(modelCd);
 
-		if(data != null){
-			try {
-				while(data.next()){
-					Object[] row = new Object[7];
-					row[0] = data.getString("Id");
-					row[1] = data.getString("description");
-					row[2] = data.getString("price");
-					row[3] = data.getString("expire");
-					row[4] = data.getString("stock");
-					row[5] = data.getString("discount");
-					row[6] = data.getString("sales");
-					
-					model.addRow(row);
-					}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	private void insertDataTable(ResultSet data, java.sql.ResultSetMetaData resul, DefaultTableModel model) {
+		Object[] columns;
+		Object[] rows;
+		try {
+			columns = new Object[resul.getColumnCount()];
+			rows = new Object[resul.getColumnCount()];
+			for(int i = 0; i < columns.length; i++) {
+				columns[i] = resul.getColumnName(i + 1);
 			}
-		}
+		
+			if(data != null){
+				try {
+					while(data.next()){
+	
+						for(int i = 0; i < columns.length; i++) {
+							rows[i] = data.getString(columns[i].toString());
+						}
+						model.addRow(rows);
+					}				
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}	
+	}
 
-    }
+	public void setTable(JTable table, DefaultTableModel model, String db) throws SQLException {
+		try {
+			ResultSet data = con.getDataTable(db);
+			java.sql.ResultSetMetaData resul = data.getMetaData();
+			insertDataTable(data, resul, model);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Problems with the data base");
+		}
+	}
 
     public void cleanTable(DefaultTableModel model)
 	{
@@ -68,6 +80,20 @@ public class Operation {
 		}
 		
 		
+	}
+
+	public void orderBy(String name, DefaultTableModel model) {
+		try {
+			ResultSet data = con.getDataTableOrderBy("products", name);
+			java.sql.ResultSetMetaData resul = data.getMetaData();
+			cleanTable(model);
+			insertDataTable(data, resul, model);
+		} catch(SQLException e) {
+			JOptionPane.showMessageDialog(null, "Something wrong just happened.");
+
+		}
+		
+
 	}
 
     
