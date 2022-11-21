@@ -1,5 +1,15 @@
 package Sells;
 import Products.*;
 import java.util.ArrayList;
+import DataBase.*;
 
-public void addProduct()
+public class Cart {
+
+    public void addProduct(Product productito, int amount){
+    }
+
+    public void cleanCart(){
+
+    }
+    
+}
