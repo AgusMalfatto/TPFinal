@@ -188,5 +188,9 @@ public class Conection {
         
     }
 
+    // public void truncateTable(String nameTable){
+    //     String sql = ""
+    // }
+
     
 }
