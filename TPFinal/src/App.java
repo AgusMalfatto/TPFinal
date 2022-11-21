@@ -6,5 +6,6 @@ public class App {
         // Esto es un comentario
         window.setVisible(true);
         // Haciendo un comentario
+        
     }
 }

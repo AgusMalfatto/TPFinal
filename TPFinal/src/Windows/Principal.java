@@ -753,7 +753,8 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     }                                              
 
     private void btnCarAddActionPerformed(java.awt.event.ActionEvent evt) {                                          
-        // TODO add your handling code here:
+        CustomerClass windowC = new CustomerClass();
+        windowC.setVisible(true);
     }                                         
 
     private void btnCarConfirmActionPerformed(java.awt.event.ActionEvent evt) {                                              
