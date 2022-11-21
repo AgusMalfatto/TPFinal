@@ -5,5 +5,6 @@ public class App {
         Principal window = new Principal();
         // Esto es un comentario
         window.setVisible(true);
+        // Haciendo un comentario
     }
 }
