@@ -5,6 +5,7 @@ public class App {
         // Conection conect = new Conection();
         // conect.addDBProd("Banana", "2025/05/11", 15, 15.3f, 10);
         // conect.showData();
+        // Master
         Principal app = new Principal();
         app.setVisible(true);
     }
