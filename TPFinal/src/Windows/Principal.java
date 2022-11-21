@@ -697,7 +697,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         // TODO add your handling code here:
     }                                            
 
-    // Agrego un nuevo producto a la base de datos
+    // Agrego un nuevo producto a la base de datos.
     private void btnDataAddActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                           
         
         Product prod = getProduct();
@@ -710,7 +710,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         }
     }                                          
     
-    // Capturo los datos ingresados y retorno un objeto de tipo product
+    // Capturo los datos ingresados y retorno un objeto de tipo product.
     private Product getProduct() {
         Product prod = null;
 
@@ -730,7 +730,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         return prod;
     }
 
-    // Modifico los datos de la db de un prod seleccionado 
+    // Modifico los datos de la db de un prod seleccionado. 
     private void btnDataModifyActionPerformed(java.awt.event.ActionEvent evt) {                                              
         Product prod = getProduct();
         
@@ -756,7 +756,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
        
     }                                             
 
-    // Se elimina un producto seleccionado de la db 
+    // Se elimina un producto seleccionado de la db. 
     private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -768,7 +768,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         
     }                                             
 
-    //Ingeso de mercadería
+    //Ingeso de mercadería.
     private void btnDataIncomeActionPerformed(java.awt.event.ActionEvent evt) throws NumberFormatException, SQLException {                                              
         if(!txtid.getText().equals("")) {
             ResultSet data = conect.getProd("products", Integer.parseInt(txtid.getText()));
@@ -788,6 +788,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         }
     }                                             
 
+    // Setea en 0 el stock de los productos vencidos.
     private void btnDataExpiredActionPerformed(java.awt.event.ActionEvent evt) {                                               
         LocalDate today = LocalDate.now();
         try {
@@ -805,10 +806,12 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
     }                                              
 
+    // Limpia cuadros de textos y tablas.
     private void btnDataResetActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                             
         clean();
     }                                            
 
+    // Busca en la db lo ingresado en el cuadro de texto y la columna seleccionada.
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {                                          
         String quest = txtSearch.getText();
         if(!quest.equals("")) {
@@ -834,6 +837,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         }
     }                                         
 
+    // Muestro en pantalla aquellos productos que tiene stock mayor a 0.
     private void btnOnlyStockActionPerformed(java.awt.event.ActionEvent evt) {                                             
         try {
             ResultSet data = conect.getStock("products");
@@ -850,10 +854,12 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         }
     }                                            
 
+    // Ordeno la tabla de productos por cantidad de ventas de cada producto.
     private void btnOrderbySellsActionPerformed(java.awt.event.ActionEvent evt) {                                                
         oper.orderBy("sales", modelProd, "DESC");
     }                                               
 
+    // Se filtran y se muestran en tabla solo los artículos vencidos.
     private void btnOnlyExpiredActionPerformed(java.awt.event.ActionEvent evt) {                                               
         LocalDate today = LocalDate.now();
         try {
@@ -884,6 +890,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         // TODO add your handling code here:
     }       
     
+    // Limpio los cuadros de texto y las tablas.
     public void clean() throws Exception {
         txtid.setText("");
         txtDescription.setText("");

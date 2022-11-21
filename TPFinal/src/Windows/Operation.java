@@ -18,6 +18,11 @@ public class Operation {
 		con = new Conection(); 
 	}
 
+	/* Ingresa los datos a una tabla
+	 * data: datos de la db
+	 * resul: información de las columnas
+	 * model: modelo de la tabla que se quiera rellenar
+	*/
 	public void insertDataTable(ResultSet data, java.sql.ResultSetMetaData resul, DefaultTableModel model) {
 		Object[] columns;
 		Object[] rows;
@@ -48,6 +53,11 @@ public class Operation {
 		}	
 	}
 
+	/* Busca los datos necesarios para mostrarlos por tabla 
+	 * table: tabla en donde se mostrarán los resultados
+	 * model: modelo de la tabla que se quiera rellenar
+	 * db: tabla de la base de datos a la cual se quiere acceder
+	*/
 	public void setTable(JTable table, DefaultTableModel model, String db) throws SQLException {
 		try {
 			ResultSet data = con.getDataTable(db);
@@ -58,6 +68,7 @@ public class Operation {
 		}
 	}
 
+	// Limpia el modelo de tabla enviada como parámetro
     public void cleanTable(DefaultTableModel model)
 	{
 		int rows = model.getRowCount();
@@ -72,6 +83,11 @@ public class Operation {
 
 	}
 
+	/* Modifica todos los datos de un producto
+	 * prod: producto de tipo Product a modificar
+	 * id: id del producto a modificar
+	 * model: modelo de la tabla que se modifica 
+	 */
 	public void modifyProd(Product prod, int id, DefaultTableModel model) throws SQLException{
 		if(prod != null) {
 			con.modifyDBProd(prod, id);
@@ -82,6 +98,11 @@ public class Operation {
 		
 	}
 
+	/* Ordena una tabla
+	 * name: nombre de la columna a ordenar
+	 * model: modelo de la tabla que se ordena
+	 * order: orden con el que se quiere ordenar (ASC, DESC)
+	 */
 	public void orderBy(String name, DefaultTableModel model, String order) {
 		try {
 			ResultSet data = con.getDataTableOrderBy("products", name, order);
