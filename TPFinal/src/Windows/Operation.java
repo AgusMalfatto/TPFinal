@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
 
 import DataBase.Conection;
 import Products.Product;
@@ -17,34 +20,37 @@ public class Operation {
 	public Operation() throws Exception {
 		con = new Conection(); 
 	}
-    public void setTable(JTable table, DefaultTableModel model) throws Exception {
-        
-               
-        ResultSet data = con.getDataTable("products");
-		
-		//CleanTable(modelCd);
 
-		if(data != null){
-			try {
-				while(data.next()){
-					Object[] row = new Object[7];
-					row[0] = data.getString("Id");
-					row[1] = data.getString("description");
-					row[2] = data.getString("price");
-					row[3] = data.getString("expire");
-					row[4] = data.getString("stock");
-					row[5] = data.getString("discount");
-					row[6] = data.getString("sales");
-					
-					model.addRow(row);
-					}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	public void setTable(JTable table, DefaultTableModel model, String db) throws SQLException {
+		try {
+			ResultSet data = con.getDataTable(db);
+			java.sql.ResultSetMetaData resul = data.getMetaData();
+			Object[] columns = new Object[resul.getColumnCount()];
+			Object[] rows = new Object[resul.getColumnCount()];
+
+			for(int i = 0; i < columns.length; i++) {
+				columns[i] = resul.getColumnName(i + 1);
+				System.out.println(columns[i]);
 			}
-		}
+		
+			if(data != null){
+				try {
+					while(data.next()){
 
-    }
+						for(int i = 0; i < columns.length; i++) {
+							rows[i] = data.getString(columns[i].toString());
+						}						
+						model.addRow(rows);
+						}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Problems with the data base");
+		}
+	}
 
     public void cleanTable(DefaultTableModel model)
 	{

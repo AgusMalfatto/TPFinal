@@ -180,7 +180,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
                 try {
                     btnDataAddActionPerformed(evt);
                     oper.cleanTable(modelProd);
-                    oper.setTable(jTableProducts, modelProd);
+                    oper.setTable(jTableProducts, modelProd, "products");
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -194,7 +194,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
                 try {
                     btnDataDeleteActionPerformed(evt);
                     oper.cleanTable(modelProd);
-                    oper.setTable(jTableProducts, modelProd);
+                    oper.setTable(jTableProducts, modelProd, "products");
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -650,7 +650,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
         pack();
 
-        oper.setTable(jTableProducts, modelProd);
+        oper.setTable(jTableProducts, modelProd, "products");
     }// </editor-fold>                        
 
     private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
@@ -663,9 +663,9 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
         if(prod != null) {                
             conect.addDBProd(prod);
-            oper.setTable(jTableProducts, modelProd);
+            oper.setTable(jTableProducts, modelProd, "products");
         } else {
-            JOptionPane.showMessageDialog(null, "Please insert all the data.");
+            JOptionPane.showMessageDialog(null, "Please insert correct data.");
         }
     }                                          
     
@@ -682,7 +682,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
                 int discount = (int) Math.round(Double.parseDouble(txtDiscount.getText()));
                 prod = new Product(description, stock, price, expire, discount);  
             }catch(NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Please insert correct data.");                
+                             
             }
         }
         return prod;
@@ -697,7 +697,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
                 oper.modifyProd(prod, id, modelProd);
                 oper.cleanTable(modelProd);
             try {
-                oper.setTable(jTableProducts, modelProd);
+                oper.setTable(jTableProducts, modelProd, "products");
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -720,7 +720,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
             conect.delelteDB("products", id);   
             clean();         
         }                                          
-        oper.setTable(jTableProducts, modelProd);
+        oper.setTable(jTableProducts, modelProd, "products");
         
     }                                             
 
@@ -774,7 +774,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         txtDiscount.setText("");
         txtSearch.setText("");
         oper.cleanTable(modelProd);
-        oper.setTable(jTableProducts, modelProd);
+        oper.setTable(jTableProducts, modelProd, "products");
     }
 
     /**
