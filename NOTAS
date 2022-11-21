@@ -64,6 +64,7 @@ CREATE TABLE cart (
     PRIMARY KEY (id)
 );
 
+
 ======================================
 FIN CODIGO DE BASE DE DATOS
 ======================================

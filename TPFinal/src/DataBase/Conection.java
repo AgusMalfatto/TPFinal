@@ -188,9 +188,41 @@ public class Conection {
         
     }
 
-    // public void truncateTable(String nameTable){
-    //     String sql = ""
-    // }
+    public void truncateTable(String nameTable){
+        try{
+            sql = "truncate " + nameTable;
+            executeConsult(sql);
+        } catch(Exception e){
+            System.err.print(e.getMessage());
+        }
+    }
+
+    public void addProductCart(Product productito, int amount){
+        sql = "insert into products ( description, price, expire, stock, discount, sales) values ('" + 
+        productito.getDescription() + "', '" + Float.toString(productito.getPrice()) + "', '" + productito.getExpiration() + "', '" + 
+        amount + "', '" + Integer.toString(productito.getDiscount())+ "') ON DUPLICATE KEY UPDATE amount = amount + " + amount + ";";
+        try {
+            executeConsult(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+    }
+
+    public float totalCart(){
+        float total;
+
+        sql = "select SUM(c.subtotal) as total from (select ((price*amount)-(price*amount)*discount/100) as subtotal from cart) as c";
+        try{
+            result = executeGetter(sql);
+            total = result.getFloat("total");
+            return total;
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+            return -1;
+        }
+    }
 
     
 }
