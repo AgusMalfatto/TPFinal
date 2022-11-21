@@ -53,6 +53,17 @@ CREATE TABLE customers (
     PRIMARY KEY (id)
 )
 
+-- CREAR TABAL CART
+CREATE TABLE cart (
+	id INT NOT NULL,
+    description VARCHAR(100) NOT NULL,
+    price REAL NOT NULL,
+    expire DATE NOT NULL,
+    amount INT NOT NULL,
+    discount REAL NOT NULL,
+    PRIMARY KEY (id)
+);
+
 ======================================
 FIN CODIGO DE BASE DE DATOS
 ======================================
