@@ -60,6 +60,7 @@ public class Operation {
 	*/
 	public void setTable(JTable table, DefaultTableModel model, String tableDB) throws SQLException {
 		try {
+			cleanTable(model);
 			ResultSet data = con.getDataTable(tableDB);
 			java.sql.ResultSetMetaData resul = data.getMetaData();
 			insertDataTable(data, resul, model);
@@ -76,11 +77,9 @@ public class Operation {
 		{
 			for(int i = 0; i < rows; i++)
 			{
-				model.removeRow(0);
-				
+				model.removeRow(0);				
 			}			
 		}
-
 	}
 
 	/* Modifica todos los datos de un producto
