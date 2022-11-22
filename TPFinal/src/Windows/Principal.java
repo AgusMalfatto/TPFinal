@@ -18,12 +18,16 @@ import java.time.LocalDate;
 
 import DataBase.Conection;
 import Products.Product;
+import Sells.Cart;
 
 public class Principal extends javax.swing.JFrame implements ActionListener, AncestorListener {
 
+    private Cart cart = new Cart();
     private Conection conect;
     private Operation oper;
     private DefaultTableModel modelProd;
+    private DefaultTableModel modelCart;
+    private DefaultTableModel modelSales;
     protected int colSelected = -1;
     protected String nameColumn = null;
     /**
@@ -490,6 +494,44 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
         jTableProducts.setModel(modelProd);
 
+        modelCart = new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Description", "Price", "Expire", "Amount", "Discount"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        };
+
+        jTableCar.setModel(modelCart);
+
+        modelSales = new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "ID customer","Customer name", "Phone number", "Final price"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        };
+
+        jTableSales.setModel(modelSales);
+
         jTableProducts.getTableHeader().addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -556,18 +598,16 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         jTableSales.setBackground(new java.awt.Color(102, 102, 102));
         jTableSales.setForeground(new java.awt.Color(255, 255, 255));
 
-        
-
         jTableSales.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Customer name", "Phone number", "Final price"
+                "ID", "ID customer","Customer name", "Phone number", "Final price"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -601,22 +641,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
         jTableCar.setBackground(new java.awt.Color(102, 102, 102));
         jTableCar.setForeground(new java.awt.Color(255, 255, 255));
-        jTableCar.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
 
-            },
-            new String [] {
-                "ID", "Description", "Price", "Expire", "Amount", "Discount"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         jScrollPane2.setViewportView(jTableCar);
         if (jTableCar.getColumnModel().getColumnCount() > 0) {
             jTableCar.getColumnModel().getColumn(0).setMaxWidth(60);
@@ -694,6 +719,9 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         pack();
 
         oper.setTable(jTableProducts, modelProd, "products");
+        cart.cleanCart();
+        oper.setTable(jTableCar, modelCart, "cart");
+        oper.setTable(jTableSales, modelSales, "sales");
     }// </editor-fold>                        
 
     private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
