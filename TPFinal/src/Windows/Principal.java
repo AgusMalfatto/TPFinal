@@ -377,7 +377,12 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         btnCarConfirm.setText("Confirm");
         btnCarConfirm.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCarConfirmActionPerformed(evt);
+                try {
+                    btnCarConfirmActionPerformed(evt);
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -549,24 +554,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
         jTableCar.setModel(modelCart);
 
-        modelSales = new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "ID customer","Customer name", "Phone number", "Final price"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        };
-
-        jTableSales.setModel(modelSales);
+        modelSales = new javax.swing.table.DefaultTableModel();
 
         jTableProducts.getTableHeader().addMouseListener(new MouseListener() {
             @Override
@@ -634,6 +622,15 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         jTableSales.setBackground(new java.awt.Color(102, 102, 102));
         jTableSales.setForeground(new java.awt.Color(255, 255, 255));
 
+        modelSales.addColumn("ID");
+        modelSales.addColumn("ID customer");
+        modelSales.addColumn("Customer name");
+        modelSales.addColumn("Phone number");
+        modelSales.addColumn("Final price");
+        
+        jTableSales.setModel(modelSales);
+
+        /*
         jTableSales.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -649,7 +646,8 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
-        });
+        }); */
+
         jScrollPane3.setViewportView(jTableSales);
         if (jTableSales.getColumnModel().getColumnCount() > 0) {
             jTableSales.getColumnModel().getColumn(0).setMaxWidth(100);
@@ -831,19 +829,17 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
     // Se elimina un producto seleccionado de la db. 
     private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
-<<<<<<< HEAD
         if(!txtid.getText().equals("")) {
             if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
             JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 int id = Integer.parseInt(txtid.getText());
-                conect.delelteDB("products", id);   
+                conect.deleteDB("products", id);   
                 clean();         
             }                                          
             oper.setTable(jTableProducts, modelProd, "products");
         } else {
             JOptionPane.showMessageDialog(null, "Please select a product from the table.");
         }       
-=======
         if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             int id = Integer.parseInt(txtid.getText());
@@ -851,8 +847,6 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
             clean();         
         }                                          
         oper.setTable(jTableProducts, modelProd, "products");
-        
->>>>>>> 5c8823a72fa8eb5fcf1645d095fcd82ae0225070
     }                                             
 
     //Ingeso de mercadería.
@@ -976,9 +970,14 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         }
     }                                         
 
-    private void btnCarConfirmActionPerformed(java.awt.event.ActionEvent evt) {     
-        custom.setVisible(true);
-    }                                             
+    private void btnCarConfirmActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {     
+        ResultSet finalPrice = conect.getFinalPrice();
+        if(finalPrice.next()) {
+            txtCarTotal.setText(finalPrice.getString(1));
+            custom.setVisible(true);
+           
+        }       
+    }   
 
     private void btnCarClearActionPerformed(java.awt.event.ActionEvent evt) {                                            
         try{
@@ -1000,6 +999,9 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         txtSearch.setText("");
         oper.cleanTable(modelProd);
         oper.setTable(jTableProducts, modelProd, "products");
+        oper.cleanTable(modelSales);
+        oper.setTable(jTableSales, modelSales, "sales");
+        oper.cleanTable(modelCart);
     }
 
     /**
