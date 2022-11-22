@@ -241,7 +241,7 @@ public class Conection {
     }
 
     public void addProductCart(Product productito, int amount){
-        sql = "insert into products ( description, price, expire, stock, discount, sales) values ('" + 
+        sql = "insert into cart ( id, description, price, expire, amount, discount) values (" + productito.getId() + ",'" + 
         productito.getDescription() + "', '" + Float.toString(productito.getPrice()) + "', '" + productito.getExpiration() + "', '" + 
         amount + "', '" + Integer.toString(productito.getDiscount())+ "') ON DUPLICATE KEY UPDATE amount = amount + " + amount + ";";
         try {

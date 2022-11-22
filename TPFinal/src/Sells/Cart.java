@@ -1,11 +1,11 @@
 package Sells;
 import Products.*;
-import java.util.ArrayList;
 import DataBase.*;
 
 public class Cart {
 
     Conection con;
+    private int idDelete;
 
 	public Cart() throws Exception {
 		con = new Conection(); 
@@ -26,5 +26,15 @@ public class Cart {
     public float calculateTotal(){
         return con.totalCart();
     }
+
+    public int getIdDelete() {
+        return idDelete;
+    }
+
+    public void setIdDelete(int idDelete) {
+        this.idDelete = idDelete;
+    }
+
+    
 
 }

@@ -20,6 +20,7 @@ import Sells.Cart;
 public class Principal extends javax.swing.JFrame implements ActionListener, AncestorListener {
 
     private Cart cart = new Cart();
+    private Product productSelected; 
     private Conection conect;
     private Operation oper;
     private DefaultTableModel modelProd;
@@ -27,6 +28,8 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     private DefaultTableModel modelSales;
     protected int colSelected = -1;
     protected String nameColumn = null;
+
+
     /**
      * Creates new form Principal
      * @throws Exception
@@ -452,6 +455,42 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 					txtExpiration.setText(jTableProducts.getValueAt(row, 3).toString());
 					txtStock.setText(jTableProducts.getValueAt(row, 4).toString());
                     txtDiscount.setText(jTableProducts.getValueAt(row, 5).toString());
+                     
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+		});
+
+        jTableCar.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = jTableCar.getSelectedRow();
+				if(row >= 0)
+				{
+					cart.setIdDelete(Integer.parseInt(jTableCar.getValueAt(row, 0).toString()));
                 }
             }
 
@@ -722,7 +761,13 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     }// </editor-fold>                        
 
     private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        // TODO add your handling code here:
+        try{
+            cart.deleteProduct(cart.getIdDelete());
+            oper.cleanTable(modelCart);
+            oper.setTable(jTableCar, modelCart, "cart");
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+        }
     }                                            
 
     // Agrego un nuevo producto a la base de datos.
@@ -906,16 +951,30 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     }                                              
 
     private void btnCarAddActionPerformed(java.awt.event.ActionEvent evt) {                                          
-        
+        try{
+            int row = jTableProducts.getSelectedRow();
+            productSelected = new Product(Integer.parseInt(jTableProducts.getValueAt(row, 0).toString()), jTableProducts.getValueAt(row, 1).toString(), Float.parseFloat(jTableProducts.getValueAt(row, 2).toString()), jTableProducts.getValueAt(row, 3).toString(), Integer.parseInt(jTableProducts.getValueAt(row, 4).toString()), Float.parseFloat(jTableProducts.getValueAt(row, 5).toString()), Integer.parseInt(jTableProducts.getValueAt(row, 6).toString()));
+            cart.addProduct(productSelected, Integer.parseInt(spinnerCar.getValue().toString()));
+            oper.cleanTable(modelCart);
+            oper.setTable(jTableCar, modelCart, "cart");
+        } catch(Exception e){
+            System.err.println(e.getMessage());;
+        }
     }                                         
 
     private void btnCarConfirmActionPerformed(java.awt.event.ActionEvent evt) {                                              
         CustomersWindow windowC = new CustomersWindow();
         windowC.setVisible(true);
+        
     }                                             
 
     private void btnCarClearActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        // TODO add your handling code here:
+        try{
+            cart.cleanCart();
+            oper.setTable(jTableCar, modelCart, "cart");
+        } catch(Exception e){
+            System.err.println(e.getMessage());;
+        }
     }       
     
     // Limpio los cuadros de texto y las tablas.
