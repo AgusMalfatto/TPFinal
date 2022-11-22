@@ -22,7 +22,7 @@ public class Conection {
         System.out.println("Welcome to 'El Marcianito'");
         try{
          Class.forName("com.mysql.cj.jdbc.Driver");
-         dbConnect = DriverManager.getConnection(dbURL, user, "Racing.2010");
+         dbConnect = DriverManager.getConnection(dbURL, user, password);
          sqlSt = dbConnect.createStatement(); // allows SQL to be executed
          sqlSt.close();
 
