@@ -148,6 +148,17 @@ public class Conection {
         }
     }
 
+    // Modifica todos los datos de un producto con un determinado id
+    public void modifyDBCustomer(String name, String phone, String address, int id){
+        sql = "UPDATE customers SET customer_name = '" + name + "', phone_number = '" + phone + "', direccion = '" + address + "' WHERE id = " + id + ";";
+        try {
+            executeConsult(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+    }
+
     /* Actualiza un dato en particular
      * table: tabla del dato a modificar
      * column: columna a modificar
@@ -212,6 +223,43 @@ public class Conection {
             e.printStackTrace();
         }
         return result;
+    }
+
+    // Agrego un nuevo cliente a la base de datos
+    public void addClient(String name, String phone, String address) {
+        sql = "insert into customers (customer_name, phone_number, direccion) values ('" + name + "', '" + phone + "', '" + address + "');";
+        try {
+            executeConsult(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+    }
+
+    public ResultSet getFinalPrice() {
+		sql = "select SUM(c.subtotal) as total from (select ((price*amount)-(price*amount)*discount/100) as subtotal from cart ) as c;";
+		try {
+            this.result = executeGetter(sql);
+            return this.result;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+        return null;
+	}
+
+    public void addSale(int id, String name, String phone, double finalPrice) {
+        sql = "INSERT INTO sales (id_customer, customer_name, phone_number, final_price) VALUES ('" + 
+        id + "', '" + name + "', '" + phone + "', '" + finalPrice + "');";
+        try {
+            executeConsult(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+
     }
 
 }
