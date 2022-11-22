@@ -449,8 +449,7 @@ public class CustomerWindow extends javax.swing.JFrame {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-            }
-            
+            }            
         }
     }                                          
 

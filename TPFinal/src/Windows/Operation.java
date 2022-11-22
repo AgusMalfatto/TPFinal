@@ -60,6 +60,7 @@ public class Operation {
 	*/
 	public void setTable(JTable table, DefaultTableModel model, String tableDB) throws SQLException {
 		try {
+			cleanTable(model);
 			ResultSet data = con.getDataTable(tableDB);
 			java.sql.ResultSetMetaData resul = data.getMetaData();
 			insertDataTable(data, resul, model);
