@@ -15,14 +15,21 @@ import java.time.LocalDate;
 
 import DataBase.Conection;
 import Products.Product;
+import Sells.Cart;
 
 public class Principal extends javax.swing.JFrame implements ActionListener, AncestorListener {
 
+    private Cart cart = new Cart();
+    private Product productSelected; 
     private Conection conect;
     private Operation oper;
     private DefaultTableModel modelProd;
+    private DefaultTableModel modelCart;
+    private DefaultTableModel modelSales;
     protected int colSelected = -1;
     protected String nameColumn = null;
+
+
     /**
      * Creates new form Principal
      * @throws Exception
@@ -448,6 +455,42 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 					txtExpiration.setText(jTableProducts.getValueAt(row, 3).toString());
 					txtStock.setText(jTableProducts.getValueAt(row, 4).toString());
                     txtDiscount.setText(jTableProducts.getValueAt(row, 5).toString());
+                     
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+		});
+
+        jTableCar.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = jTableCar.getSelectedRow();
+				if(row >= 0)
+				{
+					cart.setIdDelete(Integer.parseInt(jTableCar.getValueAt(row, 0).toString()));
                 }
             }
 
@@ -486,6 +529,44 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         modelProd.addColumn("Sales");
 
         jTableProducts.setModel(modelProd);
+
+        modelCart = new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Description", "Price", "Expire", "Amount", "Discount"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        };
+
+        jTableCar.setModel(modelCart);
+
+        modelSales = new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "ID customer","Customer name", "Phone number", "Final price"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        };
+
+        jTableSales.setModel(modelSales);
 
         jTableProducts.getTableHeader().addMouseListener(new MouseListener() {
             @Override
@@ -553,18 +634,16 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         jTableSales.setBackground(new java.awt.Color(102, 102, 102));
         jTableSales.setForeground(new java.awt.Color(255, 255, 255));
 
-        
-
         jTableSales.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Customer name", "Phone number", "Final price"
+                "ID", "ID customer","Customer name", "Phone number", "Final price"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -598,22 +677,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
         jTableCar.setBackground(new java.awt.Color(102, 102, 102));
         jTableCar.setForeground(new java.awt.Color(255, 255, 255));
-        jTableCar.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
 
-            },
-            new String [] {
-                "ID", "Description", "Price", "Expire", "Amount", "Discount"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         jScrollPane2.setViewportView(jTableCar);
         if (jTableCar.getColumnModel().getColumnCount() > 0) {
             jTableCar.getColumnModel().getColumn(0).setMaxWidth(60);
@@ -691,10 +755,19 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         pack();
 
         oper.setTable(jTableProducts, modelProd, "products");
+        cart.cleanCart();
+        oper.setTable(jTableCar, modelCart, "cart");
+        oper.setTable(jTableSales, modelSales, "sales");
     }// </editor-fold>                        
 
     private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        // TODO add your handling code here:
+        try{
+            cart.deleteProduct(cart.getIdDelete());
+            oper.cleanTable(modelCart);
+            oper.setTable(jTableCar, modelCart, "cart");
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+        }
     }                                            
 
     // Agrego un nuevo producto a la base de datos.
@@ -758,6 +831,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
     // Se elimina un producto seleccionado de la db. 
     private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
+<<<<<<< HEAD
         if(!txtid.getText().equals("")) {
             if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
             JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -769,6 +843,16 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         } else {
             JOptionPane.showMessageDialog(null, "Please select a product from the table.");
         }       
+=======
+        if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
+        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            int id = Integer.parseInt(txtid.getText());
+            conect.deleteDB("products", id);   
+            clean();         
+        }                                          
+        oper.setTable(jTableProducts, modelProd, "products");
+        
+>>>>>>> 5c8823a72fa8eb5fcf1645d095fcd82ae0225070
     }                                             
 
     //Ingeso de mercadería.
@@ -881,7 +965,15 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     }                                              
 
     private void btnCarAddActionPerformed(java.awt.event.ActionEvent evt) {                                          
-        // TODO add your handling code here:
+        try{
+            int row = jTableProducts.getSelectedRow();
+            productSelected = new Product(Integer.parseInt(jTableProducts.getValueAt(row, 0).toString()), jTableProducts.getValueAt(row, 1).toString(), Float.parseFloat(jTableProducts.getValueAt(row, 2).toString()), jTableProducts.getValueAt(row, 3).toString(), Integer.parseInt(jTableProducts.getValueAt(row, 4).toString()), Float.parseFloat(jTableProducts.getValueAt(row, 5).toString()), Integer.parseInt(jTableProducts.getValueAt(row, 6).toString()));
+            cart.addProduct(productSelected, Integer.parseInt(spinnerCar.getValue().toString()));
+            oper.cleanTable(modelCart);
+            oper.setTable(jTableCar, modelCart, "cart");
+        } catch(Exception e){
+            System.err.println(e.getMessage());;
+        }
     }                                         
 
     private void btnCarConfirmActionPerformed(java.awt.event.ActionEvent evt) {     
@@ -889,7 +981,12 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     }                                             
 
     private void btnCarClearActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        // TODO add your handling code here:
+        try{
+            cart.cleanCart();
+            oper.setTable(jTableCar, modelCart, "cart");
+        } catch(Exception e){
+            System.err.println(e.getMessage());;
+        }
     }       
     
     // Limpio los cuadros de texto y las tablas.

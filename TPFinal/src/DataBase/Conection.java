@@ -8,20 +8,21 @@ import javax.swing.JOptionPane;
 import Products.Product; 
 
 public class Conection {
-    Statement sqlSt; // runs sql
+    Statement sqlSt = null; // runs sql
     // String useSQL = new String("use prueba");
     String output;
     ResultSet result; // holds the output from sql
     String sql;
     private String dbURL = "jdbc:mysql://localhost:3306/marcianito";
     private Connection dbConnect;
-    
+    private String password = "password";
+    private String user = "root";
 
     public Conection() throws Exception {
         System.out.println("Welcome to 'El Marcianito'");
         try{
          Class.forName("com.mysql.cj.jdbc.Driver");
-         dbConnect = DriverManager.getConnection(dbURL, "root", "Racing.2010");
+         dbConnect = DriverManager.getConnection(dbURL, user, password);
          sqlSt = dbConnect.createStatement(); // allows SQL to be executed
          sqlSt.close();
 
@@ -53,6 +54,7 @@ public class Conection {
         }catch(SQLException ex){
             Logger.getLogger(Conection.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Could not connect to db");
+            System.out.println("aca hay algo que no me andaaaaaa");
             JOptionPane.showMessageDialog(null, "Something is wrong with the execution the query.");
         }
         return null;
@@ -60,12 +62,13 @@ public class Conection {
 
     // Retorna todos los datos de una tabla pasada como parámetro
     public ResultSet getDataTable(String table){
-        sql = "Select * from " + table + " order by id;";
+        sql = "Select * from " + table;// + " order by id;";
         try {
             result = executeGetter(sql);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
+            return null;
         }
         return result;
     }
@@ -112,7 +115,7 @@ public class Conection {
     }
 
     // Elimina un row de una tabla de db con un id
-    public void delelteDB(String table, int id){
+    public void deleteDB(String table, int id){
         sql = "Delete from " + table + " where id = " + id;
         try {
             executeConsult(sql);
@@ -262,4 +265,56 @@ public class Conection {
 
     }
 
+    public void showData() {
+        try {
+            result = executeGetter("select * from products");
+            while(result.next()) {
+                System.out.println(result.getString(1) + " - " + result.getString(2) + " - " + result.getString(3) + " - " + result.getString(4) + " - " + result.getString(5) + " - " + result.getString(6));
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+
+        
+    }
+
+    public void truncateTable(String nameTable){
+        try{
+            sql = "truncate " + nameTable;
+            executeConsult(sql);
+        } catch(Exception e){
+            System.err.print(e.getMessage());
+        }
+    }
+
+    public void addProductCart(Product productito, int amount){
+        sql = "insert into cart ( id, description, price, expire, amount, discount) values (" + productito.getId() + ",'" + 
+        productito.getDescription() + "', '" + Float.toString(productito.getPrice()) + "', '" + productito.getExpiration() + "', '" + 
+        amount + "', '" + Integer.toString(productito.getDiscount())+ "') ON DUPLICATE KEY UPDATE amount = amount + " + amount + ";";
+        try {
+            executeConsult(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+    }
+
+
+    public float totalCart(){
+        float total;
+
+        sql = "select SUM(c.subtotal) as total from (select ((price*amount)-(price*amount)*discount/100) as subtotal from cart) as c";
+        try{
+            result = executeGetter(sql);
+            total = result.getFloat("total");
+            return total;
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+            return -1;
+        }
+    }
+
+    
 }
