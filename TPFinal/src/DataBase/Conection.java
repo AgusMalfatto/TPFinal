@@ -34,7 +34,7 @@ public class Conection {
             System.out.println("SQL is badd!! " + ex.getMessage());
         }
     }
-     
+    
     private void executeConsult(String sql) throws SQLException {
         try{
             sqlSt = dbConnect.createStatement(); // allows SQL to be executed
@@ -49,8 +49,8 @@ public class Conection {
     private ResultSet executeGetter(String sql) throws SQLException{
         try{
             sqlSt = dbConnect.createStatement(); // allows SQL to be executed
-            result = sqlSt.executeQuery(sql);
-            return result;
+            ResultSet res = sqlSt.executeQuery(sql);
+            return res;
         }catch(SQLException ex){
             Logger.getLogger(Conection.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Could not connect to db");
@@ -60,6 +60,7 @@ public class Conection {
         return null;
     }
 
+    // Retorna todos los datos de una tabla pasada como parámetro
     public ResultSet getDataTable(String table){
         sql = "Select * from " + table;// + " order by id;";
         try {
@@ -72,8 +73,12 @@ public class Conection {
         return result;
     }
 
-    public ResultSet getDataTableExpired(String date) {
-        sql = "SELECT * FROM products WHERE expire <= CAST('" + date + "' AS datetime)";
+    /* Retorna los datos de una tabla mayor o menor a una fecha 
+     * condition: condición de comparación de la fecha (<, >, <= , >=, =)
+     * date: fecha a evaluar 
+    */
+    public ResultSet getDataTableExpired(String condition, String date) {
+        sql = "SELECT * FROM products WHERE expire " + condition + " CAST('" + date + "' AS datetime)";
         try {
             result = executeGetter(sql);
         } catch (SQLException e) {
@@ -83,6 +88,19 @@ public class Conection {
         return result;
     }
 
+    // Retorna los datos de una tabla cuyo stock sea mayor a 0
+    public ResultSet getStock(String table){
+        sql = "SELECT * FROM " + table + " WHERE stock > 0 ORDER BY id;";
+        try {
+            result = executeGetter(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // Retorna todos los datos de una tabla de un producto con un determinado id
     public ResultSet getProd(String table, int id) {
         sql = "SELECT * FROM " + table + " WHERE id = " + id + ";";
         try {
@@ -96,6 +114,7 @@ public class Conection {
         return null;
     }
 
+    // Elimina un row de una tabla de db con un id
     public void deleteDB(String table, int id){
         sql = "Delete from " + table + " where id = " + id;
         try {
@@ -106,6 +125,7 @@ public class Conection {
         }
     }
     
+    // Agrega un nuevo producto a la db
     public void addDBProd(Product prod){
         sql = "insert into products ( description, price, expire, stock, discount, sales) values ('" + 
         prod.getDescription() + "', '" + Float.toString(prod.getPrice()) + "', '" + prod.getExpiration() + "', '" + 
@@ -119,6 +139,7 @@ public class Conection {
         }
     }
      
+    // Modifica todos los datos de un producto con un determinado id
     public void modifyDBProd(Product prod, int id){
         sql = "update products set Description = '" + prod.getDescription() + "', Expire = '" + prod.getExpiration() + "', Stock = '" + prod.getStock() + "', Price = '" + prod.getPrice() +
             "', Discount = '" + prod.getDiscount()+ "' where id = " + id + ";";
@@ -130,6 +151,12 @@ public class Conection {
         }
     }
 
+    /* Actualiza un dato en particular
+     * table: tabla del dato a modificar
+     * column: columna a modificar
+     * newValue: valor actualizado
+     * id: id del producto a modificar
+     */
     public void updateDB(String table, String column, String newValue, int id){
         sql = "UPDATE " + table + " SET " + column + " = " + newValue + " WHERE id = " + id + ";";
         try {
@@ -140,6 +167,12 @@ public class Conection {
         }
     }
 
+    /* Adiciono un valor numérico
+     * table: tabla del dato a modificar
+     * column: columna a modificar
+     * newValue: valor que se adiciona
+     * id: id del producto a modificar
+     */
     public void updateDBStock(String table, String column, int newValue, int id){
         sql = "UPDATE " + table + " SET " + column + " = " + column + " + " + newValue + " WHERE id = " + id + ";";
         try {
@@ -149,12 +182,17 @@ public class Conection {
             e.printStackTrace();
         }
     }
-        
-    public ResultSet searchProd(String table, String title) {
-        sql = "Select * from " + table + " where Title LIKE '%" + title + "%' order by Title;";
+  
+    /* Retorna los datos de la tabla que cumplan con una búsqueda
+     * table: Tabla en la que se busca
+     * column: Columna en la que se busca
+     * value: Valor que se busca
+     */
+    public ResultSet search(String table, String column, String value) {
+        sql = "SELECT * FROM " + table + " WHERE " + column + " LIKE '%" + value + "%' ORDER BY " + column + ";";
         try {
-            result = executeGetter(sql);
-            return result;
+            this.result = executeGetter(sql);
+            return this.result;
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
@@ -162,8 +200,13 @@ public class Conection {
         return null;
     }
 
-    public ResultSet getDataTableOrderBy(String table, String column) {
-        sql = "Select * from " + table + " order by " + column + ";";
+    /* Retorna todos los datos de una tabla ordenados
+     * table: tabla que se desea ordenar
+     * column: Columna como eje de ordenamiento
+     * order: Tipo de ordenamiento (ASC, DESC)
+     */
+    public ResultSet getDataTableOrderBy(String table, String column, String order) {
+        sql = "Select * from " + table + " order by " + column + " " + order + ";";
         try {
             result = executeGetter(sql);
             

@@ -1,12 +1,9 @@
 package Windows;
 
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 import javax.swing.JOptionPane;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -94,7 +91,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         jPanelCarTable = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableCar = new javax.swing.JTable();
-        custom = new CustomerClass();
+        custom = new CustomerWindow();
         conect = new Conection();
         oper = new Operation();
 
@@ -537,7 +534,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
             public void mouseClicked(MouseEvent e) {
                 colSelected = jTableProducts.columnAtPoint(e.getPoint());
                 nameColumn = jTableProducts.getColumnName(colSelected);
-                oper.orderBy(nameColumn, modelProd);
+                oper.orderBy(nameColumn, modelProd, "ASC");
             }
 
             @Override
@@ -728,7 +725,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         // TODO add your handling code here:
     }                                            
 
-    // Agrego un nuevo producto a la base de datos
+    // Agrego un nuevo producto a la base de datos.
     private void btnDataAddActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                           
         
         Product prod = getProduct();
@@ -741,7 +738,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         }
     }                                          
     
-    // Capturo los datos ingresados y retorno un objeto de tipo product
+    // Capturo los datos ingresados y retorno un objeto de tipo product.
     private Product getProduct() {
         Product prod = null;
 
@@ -761,7 +758,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         return prod;
     }
 
-    // Modifico los datos de la db de un prod seleccionado 
+    // Modifico los datos de la db de un prod seleccionado. 
     private void btnDataModifyActionPerformed(java.awt.event.ActionEvent evt) {                                              
         Product prod = getProduct();
         
@@ -787,7 +784,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
        
     }                                             
 
-    // Se elimina un producto seleccionado de la db 
+    // Se elimina un producto seleccionado de la db. 
     private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
         if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -799,7 +796,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         
     }                                             
 
-    //Ingeso de mercadería
+    //Ingeso de mercadería.
     private void btnDataIncomeActionPerformed(java.awt.event.ActionEvent evt) throws NumberFormatException, SQLException {                                              
         if(!txtid.getText().equals("")) {
             ResultSet data = conect.getProd("products", Integer.parseInt(txtid.getText()));
@@ -819,10 +816,11 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         }
     }                                             
 
+    // Setea en 0 el stock de los productos vencidos.
     private void btnDataExpiredActionPerformed(java.awt.event.ActionEvent evt) {                                               
         LocalDate today = LocalDate.now();
         try {
-            ResultSet data = conect.getDataTableExpired(today.toString());
+            ResultSet data = conect.getDataTableExpired("<=", today.toString());
             while(data.next()) {
                 conect.updateDB("products", "stock", "0", Integer.parseInt(data.getString("id")));
             }
@@ -836,24 +834,75 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
     }                                              
 
+    // Limpia cuadros de textos y tablas.
     private void btnDataResetActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                             
         clean();
     }                                            
 
+    // Busca en la db lo ingresado en el cuadro de texto y la columna seleccionada.
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {                                          
-        // TODO add your handling code here:
+        String quest = txtSearch.getText();
+        if(!quest.equals("")) {
+            if(colSelected != -1) {
+                ResultSet data = conect.search("products", nameColumn, quest);
+			    try {
+                    if(data != null) {
+                        java.sql.ResultSetMetaData resul = data.getMetaData();
+                        oper.cleanTable(modelProd);
+                        oper.insertDataTable(data, resul, modelProd);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Register not found.");
+                    }
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, "Something wrong just happended.");
+                    e.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Please select a column.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please insert your search.");
+        }
     }                                         
 
+    // Muestro en pantalla aquellos productos que tiene stock mayor a 0.
     private void btnOnlyStockActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        // TODO add your handling code here:
+        try {
+            ResultSet data = conect.getStock("products");
+            if(data.next()) {
+                java.sql.ResultSetMetaData resul = data.getMetaData();
+                oper.cleanTable(modelProd);
+                oper.insertDataTable(data, resul, modelProd);       
+            } else {
+                JOptionPane.showMessageDialog(null, "There's no products on Stock.");
+            }
+
+        } catch (SQLException e) {
+            // TODO: handle exception
+        }
     }                                            
 
+    // Ordeno la tabla de productos por cantidad de ventas de cada producto.
     private void btnOrderbySellsActionPerformed(java.awt.event.ActionEvent evt) {                                                
-        // TODO add your handling code here:
+        oper.orderBy("sales", modelProd, "DESC");
     }                                               
 
+    // Se filtran y se muestran en tabla solo los artículos vencidos.
     private void btnOnlyExpiredActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        // TODO add your handling code here:
+        LocalDate today = LocalDate.now();
+        try {
+            ResultSet data = conect.getDataTableExpired("<=", today.toString());
+            if(data.next()) {
+                java.sql.ResultSetMetaData resul = data.getMetaData();
+                oper.cleanTable(modelProd);
+                oper.insertDataTable(data, resul, modelProd);
+            } else {
+                JOptionPane.showMessageDialog(null, "No expired products.");
+            }
+            
+        } catch (SQLException e) {
+            // TODO: handle exception
+        }
     }                                              
 
     private void btnCarAddActionPerformed(java.awt.event.ActionEvent evt) {                                          
@@ -869,6 +918,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         // TODO add your handling code here:
     }       
     
+    // Limpio los cuadros de texto y las tablas.
     public void clean() throws Exception {
         txtid.setText("");
         txtDescription.setText("");
@@ -966,7 +1016,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     private javax.swing.JTextField txtPrice;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtid;
-    CustomerClass custom;
+    CustomerWindow custom;
     // End of variables declaration                   
     @Override
     public void ancestorAdded(AncestorEvent event) {
