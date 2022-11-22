@@ -962,9 +962,14 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         try{
             int row = jTableProducts.getSelectedRow();
             productSelected = new Product(Integer.parseInt(jTableProducts.getValueAt(row, 0).toString()), jTableProducts.getValueAt(row, 1).toString(), Float.parseFloat(jTableProducts.getValueAt(row, 2).toString()), jTableProducts.getValueAt(row, 3).toString(), Integer.parseInt(jTableProducts.getValueAt(row, 4).toString()), Float.parseFloat(jTableProducts.getValueAt(row, 5).toString()), Integer.parseInt(jTableProducts.getValueAt(row, 6).toString()));
-            cart.addProduct(productSelected, Integer.parseInt(spinnerCar.getValue().toString()));
-            oper.cleanTable(modelCart);
-            oper.setTable(jTableCar, modelCart, "cart");
+            if(productSelected.getStock() > 0) {
+                cart.addProduct(productSelected, Integer.parseInt(spinnerCar.getValue().toString()));
+                oper.cleanTable(modelCart);
+                oper.setTable(jTableCar, modelCart, "cart");
+            } else {
+                JOptionPane.showMessageDialog(null, "Without stock.");
+            }
+            
         } catch(Exception e){
             System.err.println(e.getMessage());;
         }
