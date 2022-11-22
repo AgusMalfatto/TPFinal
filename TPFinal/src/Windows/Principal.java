@@ -634,22 +634,6 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         jTableSales.setBackground(new java.awt.Color(102, 102, 102));
         jTableSales.setForeground(new java.awt.Color(255, 255, 255));
 
-        jTableSales.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "ID customer","Customer name", "Phone number", "Final price"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         jScrollPane3.setViewportView(jTableSales);
         if (jTableSales.getColumnModel().getColumnCount() > 0) {
             jTableSales.getColumnModel().getColumn(0).setMaxWidth(100);
@@ -758,6 +742,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         cart.cleanCart();
         oper.setTable(jTableCar, modelCart, "cart");
         oper.setTable(jTableSales, modelSales, "sales");
+        
     }// </editor-fold>                        
 
     private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
@@ -969,7 +954,10 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     private void btnCarClearActionPerformed(java.awt.event.ActionEvent evt) {                                            
         try{
             cart.cleanCart();
+            oper.cleanTable(modelCart);
             oper.setTable(jTableCar, modelCart, "cart");
+            oper.cleanTable(modelSales);
+            oper.setTable(jTableSales, modelSales, "sales");
         } catch(Exception e){
             System.err.println(e.getMessage());;
         }
