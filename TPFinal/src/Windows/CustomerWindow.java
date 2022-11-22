@@ -396,7 +396,7 @@ public class CustomerWindow extends javax.swing.JFrame {
                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 int id = Integer.parseInt(txtID.getText());
                 try {
-                    conect.delelteDB("customers", id); 
+                    conect.deleteDB("customers", id); 
                     oper.cleanTable(modelCustomer);
                     oper.setTable(jTableCustomers2, modelCustomer, "customers");
                     JOptionPane.showMessageDialog(null, "Customer succesfully deleted");
