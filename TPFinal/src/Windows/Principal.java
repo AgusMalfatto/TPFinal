@@ -87,7 +87,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         jPanelCarTable = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableCar = new javax.swing.JTable();
-        custom = new CustomerClass();
+        custom = new CustomerWindow();
         conect = new Conection();
         oper = new Operation();
 
@@ -988,7 +988,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     private javax.swing.JTextField txtPrice;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtid;
-    CustomerClass custom;
+    CustomerWindow custom;
     // End of variables declaration                   
     @Override
     public void ancestorAdded(AncestorEvent event) {
