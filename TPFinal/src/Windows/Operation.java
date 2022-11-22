@@ -58,9 +58,9 @@ public class Operation {
 	 * model: modelo de la tabla que se quiera rellenar
 	 * db: tabla de la base de datos a la cual se quiere acceder
 	*/
-	public void setTable(JTable table, DefaultTableModel model, String db) throws SQLException {
+	public void setTable(JTable table, DefaultTableModel model, String tableDB) throws SQLException {
 		try {
-			ResultSet data = con.getDataTable(db);
+			ResultSet data = con.getDataTable(tableDB);
 			java.sql.ResultSetMetaData resul = data.getMetaData();
 			insertDataTable(data, resul, model);
 		} catch (Exception e) {

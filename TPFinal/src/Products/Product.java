@@ -1,12 +1,14 @@
 package Products;
 
 public class Product {
+    private int id;
     private String description;
     private int stock;
     private float price;
     private String expiration;
     private int discount;
     private int sales;
+    private float discountf;
     
     public Product(String description, int stock, float price, String expiration, int discount) {
         this.description = description;
@@ -16,6 +18,16 @@ public class Product {
         this.discount = discount;
         this.sales = 0;
     }
+
+    public Product(int id, String description, float price, String expiration, int stock, float discountf, int sales) {
+        this.id = id;
+        this.description = description;
+        this.price = price;
+        this.expiration = expiration;
+        this.stock = stock;
+        this.discountf = discountf;
+        this.sales = sales;
+    } 
 
     public String getDescription() {
         return description;
@@ -64,5 +76,23 @@ public class Product {
     public int getSales() {
         return sales;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public float getDiscountf() {
+        return discountf;
+    }
+
+    public void setDiscountf(float discountf) {
+        this.discountf = discountf;
+    }
+
+
 
 }
