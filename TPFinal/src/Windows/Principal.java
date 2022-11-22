@@ -758,14 +758,17 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 
     // Se elimina un producto seleccionado de la db. 
     private void btnDataDeleteActionPerformed(java.awt.event.ActionEvent evt) throws Exception {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
-        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            int id = Integer.parseInt(txtid.getText());
-            conect.delelteDB("products", id);   
-            clean();         
-        }                                          
-        oper.setTable(jTableProducts, modelProd, "products");
-        
+        if(!txtid.getText().equals("")) {
+            if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
+            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                int id = Integer.parseInt(txtid.getText());
+                conect.delelteDB("products", id);   
+                clean();         
+            }                                          
+            oper.setTable(jTableProducts, modelProd, "products");
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a product from the table.");
+        }       
     }                                             
 
     //Ingeso de mercadería.
@@ -818,7 +821,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
             if(colSelected != -1) {
                 ResultSet data = conect.search("products", nameColumn, quest);
 			    try {
-                    if(data != null) {
+                    if(data.next()) {
                         java.sql.ResultSetMetaData resul = data.getMetaData();
                         oper.cleanTable(modelProd);
                         oper.insertDataTable(data, resul, modelProd);

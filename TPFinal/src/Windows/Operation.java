@@ -76,11 +76,9 @@ public class Operation {
 		{
 			for(int i = 0; i < rows; i++)
 			{
-				model.removeRow(0);
-				
+				model.removeRow(0);				
 			}			
 		}
-
 	}
 
 	/* Modifica todos los datos de un producto

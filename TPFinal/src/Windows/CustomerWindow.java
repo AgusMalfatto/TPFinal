@@ -244,8 +244,7 @@ public class CustomerWindow extends javax.swing.JFrame {
 					txtName.setText(jTableCustomers2.getValueAt(row, 1).toString());
 					txtPhone.setText(jTableCustomers2.getValueAt(row, 2).toString());
 					txtAdress.setText(jTableCustomers2.getValueAt(row, 3).toString());
-                }
-                
+                }                
             }
 
             @Override
@@ -278,8 +277,7 @@ public class CustomerWindow extends javax.swing.JFrame {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 colSelected = jTableCustomers2.columnAtPoint(e.getPoint());
-                nameColumn = jTableCustomers2.getColumnName(colSelected);
-                
+                nameColumn = jTableCustomers2.getColumnName(colSelected);                
             }
 
             @Override
@@ -367,6 +365,7 @@ public class CustomerWindow extends javax.swing.JFrame {
         oper.setTable(jTableCustomers2, modelCustomer, "customers");
     }// </editor-fold>                        
 
+    // Añado un nuevo cliente a la db
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {                                       
         if(!txtAdress.getText().equals("") && !txtName.getText().equals("") && !txtPhone.getText().equals("")) {
             if(isNumeric(txtPhone.getText())) {
@@ -381,6 +380,7 @@ public class CustomerWindow extends javax.swing.JFrame {
         }
     }  
 
+    // Verifico que un string sea de tipo numérico
     private boolean isNumeric(String text) {
         try {
             Integer.parseInt(text);
@@ -390,6 +390,7 @@ public class CustomerWindow extends javax.swing.JFrame {
         }
     }
 
+    // Elimino un cliente de la db
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {                                          
         if(!txtID.getText().equals("")) {
             if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
@@ -409,6 +410,7 @@ public class CustomerWindow extends javax.swing.JFrame {
         }
     }                                         
 
+    // Modifico un cliente de la db
     private void btnModifyActionPerformed(java.awt.event.ActionEvent evt) {                                          
         if(!txtID.getText().equals("")) {
             if (JOptionPane.showConfirmDialog(null, "Are you sure?", "DELETE PRODUCT",
@@ -426,6 +428,7 @@ public class CustomerWindow extends javax.swing.JFrame {
         }
     }                                         
 
+    // Confirmo el cliente que realiza la compra
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {                                           
         if(!txtID.getText().equals("")) {
             int id = Integer.parseInt(txtID.getText());
@@ -436,6 +439,7 @@ public class CustomerWindow extends javax.swing.JFrame {
                         conect.addSale(id, txtName.getText(), txtPhone.getText(), finalPrice.getDouble(1));
                         JOptionPane.showMessageDialog(null, "Thanks you for shopping");
                         clean();
+                        updateSales();
                         setVisible(false);;
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -450,6 +454,21 @@ public class CustomerWindow extends javax.swing.JFrame {
         }
     }                                          
 
+    // Actualizo las ventas de cada producto de la tabla products de la db
+    private void updateSales() {
+        ResultSet data = conect.getDataTable("cart");
+        try {
+            while(data.next()) {
+                conect.updateDBStock("products", "sales", Integer.parseInt(data.getString("amount")), Integer.parseInt(data.getString("id")));
+                
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+    }
+
+    // Limpio cuadros de texto
     private void clean() {
         txtID.setText("");
         txtName.setText("");
@@ -457,6 +476,7 @@ public class CustomerWindow extends javax.swing.JFrame {
         txtAdress.setText("");
     }
 
+    // Busca en la tabla customers
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {                                          
         String search = txtSearch.getText();
         if(!search.equals("")) {
