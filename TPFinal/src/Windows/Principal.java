@@ -496,6 +496,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
 				if(row >= 0)
 				{
 					cart.setIdDelete(Integer.parseInt(jTableCar.getValueAt(row, 0).toString()));
+					cart.setAmountDelete(Integer.parseInt(jTableCar.getValueAt(row, 4).toString()));
                 }
             }
 
@@ -628,25 +629,25 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         modelSales.addColumn("Phone number");
         modelSales.addColumn("Final price");
         
+        
+        
+        // jTableSales.setModel(new javax.swing.table.DefaultTableModel(
+        //     new Object [][] {
+                
+        //     },
+        //     new String [] {
+        //         "ID", "ID customer","Customer name", "Phone number", "Final price"
+        //     }
+        //     ) {
+        //         boolean[] canEdit = new boolean [] {
+        //             false, false, false, false, false
+        //         };
+                
+        //         public boolean isCellEditable(int rowIndex, int columnIndex) {
+        //             return canEdit [columnIndex];
+        //         }
+        //     }); 
         jTableSales.setModel(modelSales);
-
-        /*
-        jTableSales.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "ID customer","Customer name", "Phone number", "Final price"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        }); */
 
         jScrollPane3.setViewportView(jTableSales);
         if (jTableSales.getColumnModel().getColumnCount() > 0) {
@@ -759,15 +760,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         
     }// </editor-fold>                        
 
-    private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        try{
-            cart.deleteProduct(cart.getIdDelete());
-            oper.cleanTable(modelCart);
-            oper.setTable(jTableCar, modelCart, "cart");
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-        }
-    }                                            
+                                 
 
     // Agrego un nuevo producto a la base de datos.
     private void btnDataAddActionPerformed(java.awt.event.ActionEvent evt) throws Exception {                                           
@@ -787,7 +780,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         Product prod = null;
 
         if(!txtDescription.getText().equals("") && !txtStock.getText().equals("") && !txtPrice.getText().equals("") && 
-        !txtExpiration.getText().equals("")) {
+        oper.validateDateAfter(txtExpiration.getText())) {
             try {
                 String description = txtDescription.getText();
                 int stock = Integer.parseInt(txtStock.getText());
@@ -901,6 +894,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
                 ResultSet data = conect.search("products", nameColumn, quest);
 			    try {
                     if(data.next()) {
+                        data = conect.search("products", nameColumn, quest);
                         java.sql.ResultSetMetaData resul = data.getMetaData();
                         oper.cleanTable(modelProd);
                         oper.insertDataTable(data, resul, modelProd);
@@ -924,6 +918,7 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         try {
             ResultSet data = conect.getStock("products");
             if(data.next()) {
+                data = conect.getStock("products");
                 java.sql.ResultSetMetaData resul = data.getMetaData();
                 oper.cleanTable(modelProd);
                 oper.insertDataTable(data, resul, modelProd);       
@@ -947,9 +942,9 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         try {
             ResultSet data = conect.getDataTableExpired("<=", today.toString());
             if(data.next()) {
-                java.sql.ResultSetMetaData resul = data.getMetaData();
+                // java.sql.ResultSetMetaData resul = data.getMetaData();
                 oper.cleanTable(modelProd);
-                oper.insertDataTable(data, resul, modelProd);
+                oper.setTableExpired(jTableProducts, modelProd, "products");
             } else {
                 JOptionPane.showMessageDialog(null, "No expired products.");
             }
@@ -960,13 +955,20 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
     }                                              
 
     private void btnCarAddActionPerformed(java.awt.event.ActionEvent evt) {                                          
+        ResultSet finalPrice;
         try{
             int row = jTableProducts.getSelectedRow();
-            productSelected = new Product(Integer.parseInt(jTableProducts.getValueAt(row, 0).toString()), jTableProducts.getValueAt(row, 1).toString(), Float.parseFloat(jTableProducts.getValueAt(row, 2).toString()), jTableProducts.getValueAt(row, 3).toString(), Integer.parseInt(jTableProducts.getValueAt(row, 4).toString()), Float.parseFloat(jTableProducts.getValueAt(row, 5).toString()), Integer.parseInt(jTableProducts.getValueAt(row, 6).toString()));
-            if(productSelected.getStock() > 0) {
+            productSelected = new Product(Integer.parseInt(jTableProducts.getValueAt(row, 0).toString()), jTableProducts.getValueAt(row, 1).toString(), Float.parseFloat(jTableProducts.getValueAt(row, 2).toString()), jTableProducts.getValueAt(row, 3).toString(), Integer.parseInt(jTableProducts.getValueAt(row, 4).toString()), Integer.parseInt(jTableProducts.getValueAt(row, 5).toString()), Integer.parseInt(jTableProducts.getValueAt(row, 6).toString()));
+            System.out.println(productSelected.getDiscount());
+            if(productSelected.getStock() > 0 && Integer.parseInt(spinnerCar.getValue().toString()) <= productSelected.getStock() && Integer.parseInt(spinnerCar.getValue().toString()) > 0) {
                 cart.addProduct(productSelected, Integer.parseInt(spinnerCar.getValue().toString()));
                 oper.cleanTable(modelCart);
                 oper.setTable(jTableCar, modelCart, "cart");
+                oper.cleanTable(modelProd);
+                oper.setTable(jTableProducts, modelProd, "products");
+                finalPrice = conect.getFinalPrice();
+                finalPrice.next();
+                txtCarTotal.setText(finalPrice.getString(1));
             } else {
                 JOptionPane.showMessageDialog(null, "Without stock.");
             }
@@ -974,7 +976,19 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
         } catch(Exception e){
             System.err.println(e.getMessage());;
         }
-    }                                         
+    }            
+    
+    private void btnCarRemoveActionPerformed(java.awt.event.ActionEvent evt) {                                             
+        try{
+            cart.deleteProduct(cart.getIdDelete(), cart.getAmountDelete());
+            oper.cleanTable(modelCart);
+            oper.setTable(jTableCar, modelCart, "cart");
+            oper.cleanTable(modelProd);
+            oper.setTable(jTableProducts, modelProd, "products");
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+        }
+    }           
 
     private void btnCarConfirmActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {     
         ResultSet finalPrice = conect.getFinalPrice();
@@ -992,6 +1006,10 @@ public class Principal extends javax.swing.JFrame implements ActionListener, Anc
             oper.setTable(jTableCar, modelCart, "cart");
             oper.cleanTable(modelSales);
             oper.setTable(jTableSales, modelSales, "sales");
+            oper.cleanTable(modelProd);
+            oper.setTable(jTableProducts, modelProd, "products");
+            txtCarTotal.setText("0");
+            spinnerCar.setValue(0);
         } catch(Exception e){
             System.err.println(e.getMessage());;
         }
