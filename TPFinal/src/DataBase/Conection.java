@@ -13,6 +13,7 @@ public class Conection {
     String output;
     ResultSet result; // holds the output from sql
     String sql;
+    String sql2;
     private String dbURL = "jdbc:mysql://localhost:3306/marcianito";
     private Connection dbConnect;
     private String password = "password";
@@ -72,13 +73,25 @@ public class Conection {
         }
         return result;
     }
+    public ResultSet getDataTableExpired(String table){
+        sql = "select * from products WHERE expire < current_date();";
+        try {
+            result = executeGetter(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
+            e.printStackTrace();
+            return null;
+        }
+        return result;
+    }
 
     /* Retorna los datos de una tabla mayor o menor a una fecha 
      * condition: condición de comparación de la fecha (<, >, <= , >=, =)
      * date: fecha a evaluar 
     */
     public ResultSet getDataTableExpired(String condition, String date) {
-        sql = "SELECT * FROM products WHERE expire " + condition + " CAST('" + date + "' AS datetime)";
+        // sql = "SELECT * FROM products WHERE expire " + condition + " CAST('" + date + "' AS datetime)";
+        sql = "select * from products WHERE expire < current_date();";
         try {
             result = executeGetter(sql);
         } catch (SQLException e) {
@@ -292,12 +305,25 @@ public class Conection {
         sql = "insert into cart ( id, description, price, expire, amount, discount) values (" + productito.getId() + ",'" + 
         productito.getDescription() + "', '" + Float.toString(productito.getPrice()) + "', '" + productito.getExpiration() + "', '" + 
         amount + "', '" + Integer.toString(productito.getDiscount())+ "') ON DUPLICATE KEY UPDATE amount = amount + " + amount + ";";
+        sql2 = "update products set stock=stock-" + amount + " where id = " + productito.getId() + ";";
+        // sql2 = "update products set stock=stock-" + amount + ", sales=sales+" + amount + " where id = " + productito.getId() + ";";
         try {
             executeConsult(sql);
+            executeConsult(sql2);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             JOptionPane.showMessageDialog(null, "Something is wrong with the conection to dataBase.");
             e.printStackTrace();
+        }
+    }
+
+    public void deleteProductCart(int id, int amount){
+        deleteDB("cart", id);
+        sql = "update products set stock=stock+" + amount + " where id = " + id + ";";
+        try{
+            executeConsult(sql);
+        } catch(Exception e){
+            System.err.println(e.getMessage());
         }
     }
 

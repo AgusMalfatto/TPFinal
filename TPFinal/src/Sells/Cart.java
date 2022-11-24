@@ -6,6 +6,7 @@ public class Cart {
 
     Conection con;
     private int idDelete;
+    private int amountDelete;
 
 	public Cart() throws Exception {
 		con = new Conection(); 
@@ -19,8 +20,8 @@ public class Cart {
         con.truncateTable("cart");
     }
 
-    public void deleteProduct(int id){
-        con.deleteDB("cart", id);
+    public void deleteProduct(int id, int amount){
+        con.deleteProductCart(id,amount);
     }
     
     public float calculateTotal(){
@@ -33,6 +34,14 @@ public class Cart {
 
     public void setIdDelete(int idDelete) {
         this.idDelete = idDelete;
+    }
+
+    public int getAmountDelete() {
+        return amountDelete;
+    }
+
+    public void setAmountDelete(int amountDelete) {
+        this.amountDelete = amountDelete;
     }
 
     

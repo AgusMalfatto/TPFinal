@@ -19,13 +19,13 @@ public class Product {
         this.sales = 0;
     }
 
-    public Product(int id, String description, float price, String expiration, int stock, float discountf, int sales) {
+    public Product(int id, String description, float price, String expiration, int stock, int discount, int sales) {
         this.id = id;
         this.description = description;
         this.price = price;
         this.expiration = expiration;
         this.stock = stock;
-        this.discountf = discountf;
+        this.discount = discount;
         this.sales = sales;
     } 
 

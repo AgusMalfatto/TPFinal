@@ -1,7 +1,11 @@
 package Windows;
 
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -68,6 +72,16 @@ public class Operation {
 			JOptionPane.showMessageDialog(null, "Problems with the data base");
 		}
 	}
+	public void setTableExpired(JTable table, DefaultTableModel model, String tableDB) throws SQLException {
+		try {
+			cleanTable(model);
+			ResultSet data = con.getDataTableExpired(tableDB);
+			java.sql.ResultSetMetaData resul = data.getMetaData();
+			insertDataTable(data, resul, model);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Problems with the data base");
+		}
+	}
 
 	// Limpia el modelo de tabla enviada como parámetro
     public void cleanTable(DefaultTableModel model)
@@ -114,5 +128,45 @@ public class Operation {
 		}
 		
 
+	}
+
+
+	public boolean validarFecha(String fec) {
+		boolean correcto = false;
+	
+		try {
+			//Formato de fecha (día/mes/año)
+			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+			formatoFecha.setLenient(false);
+			//Comprobación de la fecha
+			formatoFecha.parse(fec);
+			correcto = true;
+		} catch (Exception e) {
+			//Si la fecha no es correcta, pasará por aquí
+			correcto = false;
+		}
+	
+		return correcto;
+	}
+	public boolean validateDateAfter(String fec) {
+		boolean correcto = false;
+	
+		try {
+			//Formato de fecha (día/mes/año)
+			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+			formatoFecha.setLenient(false);
+			//Comprobación de la fecha
+			formatoFecha.parse(fec);
+			SimpleDateFormat formatoFechaHoy = new SimpleDateFormat("yyyy-MM-dd");
+			Date hoy = formatoFechaHoy.parse(LocalDate.now().toString());
+			if (formatoFecha.parse(fec).after(hoy)){
+				correcto = true;
+			}else{correcto = false;}
+		} catch (Exception e) {
+			//Si la fecha no es correcta, pasará por aquí
+			correcto = false;
+		}
+	
+		return correcto;
 	}
 }

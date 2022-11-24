@@ -440,6 +440,8 @@ public class CustomerWindow extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "Thanks you for shopping");
                         clean();
                         updateSales();
+                        oper.cleanTable(modelCustomer);
+                        oper.setTable(jTableCustomers2, modelCustomer, "customers");
                         setVisible(false);;
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -473,6 +475,7 @@ public class CustomerWindow extends javax.swing.JFrame {
         txtName.setText("");
         txtPhone.setText("");
         txtAdress.setText("");
+        txtSearch.setText("");
     }
 
     // Busca en la tabla customers
